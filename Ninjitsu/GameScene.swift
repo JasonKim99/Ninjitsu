@@ -12,8 +12,8 @@ import GameplayKit
 class GameScene: SKScene {
     
     //Nodes
-    var ninjitsu_Button : SKNode? //忍法按钮
-    var jieyin_Cancel : SKNode? //取消施法按钮
+    var ninjitsu_Button : SKNode! //忍法按钮
+    var jieyin_Cancel : SKNode! //取消施法按钮
     var jieyin_Group : SKNode! //印式矩阵
     var zi : SKNode!
     var chou : SKNode!
@@ -40,12 +40,19 @@ class GameScene: SKScene {
     
     
     //GameState
-//    var gameStateMachine : GKStateMachine!
+    var gameStateMachine : GKStateMachine!
     
     override func didMove(to view: SKView) {
         
         loadUI()
         
+        gameStateMachine = GKStateMachine(states: [
+            DefaultState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel),
+            SpellingState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel),
+            NinjitsuAnimatingState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel)
+        ])
+        
+        gameStateMachine.enter(DefaultState.self)
 
     }
     
@@ -82,18 +89,16 @@ extension GameScene {
 //MARK: - Touches
 extension GameScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let ninjitsu_Button = ninjitsu_Button else {return}
-        guard let jieyin_Group = jieyin_Group else {return}
-        guard let jieyin_Cancel = jieyin_Cancel else {return}
+//        guard let ninjitsu_Button = ninjitsu_Button else {return}
+//        guard let jieyin_Group = jieyin_Group else {return}
+//        guard let jieyin_Cancel = jieyin_Cancel else {return}
         for touch in touches {
             let location = touch.location(in: self)
             
             //开始结印
             if ninjitsu_Button.contains(location) && !isSpelling {
-                ninjitsu_Button.run(.fadeOut(withDuration: 0.1))
-                jieyin_Group.run(.fadeIn(withDuration: 0.1))
-                jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
-                isSpelling.toggle()
+                gameStateMachine.enter(SpellingState.self)
+                isSpelling = true
             }
             //结印ing
             if isSpelling {
@@ -107,11 +112,9 @@ extension GameScene{
 
             //是否取消了结印
             if jieyin_Cancel.contains(location) && jieyin_Cancel.alpha == 1{
-                self.removeAllActions()
-                jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-                jieyin_Group.run(.fadeOut(withDuration: 0.1))
-                ninjitsu_Button.run(.fadeIn(withDuration: 0.1))
-                isSpelling.toggle()
+                gameStateMachine.enter(DefaultState.self)
+
+                isSpelling = false
                 jieyin = ""
             }
             
@@ -128,9 +131,6 @@ extension GameScene{
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
     }
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
 }
 
 //MARK: - Action
@@ -141,7 +141,7 @@ extension GameScene {
         newnode.position = CGPoint(x: 0, y: 200)
         newnode.fontColor = .white
         newnode.fontName = "WawaSC-Regular.otf"
-        newnode.fontSize = 36
+        newnode.fontSize = 32
         newnode.text = text
         return newnode
     }
