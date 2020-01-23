@@ -11,14 +11,17 @@ import SpriteKit
 
 class Ninpo {
     var jieyin : String
+    var isConverToNinpo : Bool {
+        if ninpoDict.keys.contains(jieyin) {
+            return true
+        }
+        return false
+    }
     
     init(jieyin: String) {
         self.jieyin = jieyin
     }
     
-    func isJieyinRight() -> Bool {
-        return true
-    }
 }
 
 enum Element: String {
@@ -29,6 +32,9 @@ enum Element: String {
     case Lei = "雷遁"
 }
 
+var ninpoDict : [String : (element: Element, ninponame: String)] = [
+    "子丑" : (element: .Huo, ninponame: "火球の术")
+]
 //enum Ninjitsu: String{
 //
 //}
