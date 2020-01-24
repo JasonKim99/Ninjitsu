@@ -110,6 +110,8 @@ extension GameScene{
                         
                     }
                 }
+                //显示结印内容
+                updateText(text: jieyin, node: &jieyinLabel!)
             }
 
             //是否取消了结印
@@ -118,10 +120,8 @@ extension GameScene{
 
                 isSpelling = false
                 jieyin = ""
+                jieyinLabel?.run(.fadeOut(withDuration: 0.2))
             }
-            
-            //显示结印内容
-            updateText(text: jieyin, node: &jieyinLabel!)
             
         }
         
@@ -131,15 +131,17 @@ extension GameScene{
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        if ninpoDict.keys.contains(jieyin) {
-            gameStateMachine.enter(NinjitsuAnimatingState.self)
+        if ninpoDict.keys.contains(jieyin) && isSpelling {
+            //结印符合进行施法
             isSpelling = false
-            jieyinLabel?.run(.fadeOut(withDuration: 0.5))
+            gameStateMachine.enter(NinjitsuAnimatingState.self)
+            jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+            //显示忍法名称
             var ninpoNameText = ninpoDict[jieyin]!.element.rawValue + " • " + ninpoDict[jieyin]!.ninponame
             ninpoLabel = generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
-
             addChild(ninpoLabel!)
-            Timer.scheduledTimer(withTimeInterval: 3, repeats: false){_ in
+            ninpoLabel?.run(.scale(by: 1.5, duration: 0.2))
+            Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false){_ in
                 ninpoNameText = ""
                 self.jieyin = ""
                 self.ninpoLabel!.removeFromParent()

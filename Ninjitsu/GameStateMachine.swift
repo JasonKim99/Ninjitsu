@@ -64,9 +64,6 @@ class NinjitsuAnimatingState: GameStateMachine {
     override func didEnter(from previousState: GKState?) {
         jieyin_Group.run(.fadeOut(withDuration: 0.1))
         jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-        Timer.scheduledTimer(withTimeInterval: 3, repeats: false) {_ in
-            self.stateMachine?.enter(DefaultState.self)
-        }
     }
 }
 
