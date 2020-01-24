@@ -28,6 +28,7 @@ class GameScene: SKScene {
     var xu : SKNode!
     var hai : SKNode!
     var jieyinLabel : SKLabelNode?
+    var ninpoLabel : SKLabelNode?
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
@@ -67,6 +68,7 @@ extension GameScene {
     func loadUI(){
         ninjitsu_Button = childNode(withName: "ninjitsu_Button")
         jieyin_Group = childNode(withName: "jieyin_Group")
+        jieyin_Group.isHidden = true
         jieyin_Cancel = childNode(withName: "jieyin_Cancel")
         zi = jieyin_Group.childNode(withName: "jieyin_zi")!
         chou = jieyin_Group.childNode(withName: "jieyin_chou")!
@@ -81,7 +83,7 @@ extension GameScene {
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
-        jieyinLabel = generateJieyinText(from: jieyin)
+        jieyinLabel = generateText(from: jieyin, xPosition: 0, yPosition: 200)
     }
 }
 
@@ -119,9 +121,8 @@ extension GameScene{
             }
             
             //显示结印内容
-            updateJieyinText(text: jieyin, node: &jieyinLabel!)
-
-
+            updateText(text: jieyin, node: &jieyinLabel!)
+            
         }
         
     }
@@ -130,38 +131,60 @@ extension GameScene{
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        if ninpoDict.keys.contains(jieyin) {
+            gameStateMachine.enter(NinjitsuAnimatingState.self)
+            isSpelling = false
+            jieyinLabel?.run(.fadeOut(withDuration: 0.5))
+            var ninpoNameText = ninpoDict[jieyin]!.element.rawValue + " • " + ninpoDict[jieyin]!.ninponame
+            ninpoLabel = generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
+
+            addChild(ninpoLabel!)
+            Timer.scheduledTimer(withTimeInterval: 3, repeats: false){_ in
+                ninpoNameText = ""
+                self.jieyin = ""
+                self.ninpoLabel!.removeFromParent()
+                self.gameStateMachine.enter(DefaultState.self)
+            }
+            
+        }
+
     }
+    
+    
 }
 
 //MARK: - Action
 extension GameScene {
     
-    func generateJieyinText(from text:String)  -> SKLabelNode {
+    //显示结印
+    func generateText(from text:String, xPosition: CGFloat, yPosition: CGFloat)  -> SKLabelNode {
         let newnode = SKLabelNode()
-        newnode.position = CGPoint(x: 0, y: 200)
+        newnode.position = CGPoint(x: xPosition, y: yPosition)
         newnode.fontColor = .white
-        newnode.fontName = "WawaSC-Regular.otf"
+        newnode.fontName = "WawaSC-Regular"
         newnode.fontSize = 32
         newnode.text = text
         return newnode
     }
 
-    
-    func updateJieyinText(text: String, node: inout SKLabelNode) {
+    //实时更新显示的结印
+    func updateText(text: String, node: inout SKLabelNode) {
         let position = node.position
+        let xPosition = position.x
+        let yPosition = position.y
         let zPositon = node.zPosition
         let xScale = node.xScale
         let yScale = node.yScale
 
         node.removeFromParent()
 
-        node = generateJieyinText(from: text)
+        node = generateText(from: text, xPosition: xPosition, yPosition: yPosition)
         node.position = position
         node.zPosition = zPositon
         node.xScale = xScale
         node.yScale = yScale
+        node.alpha = 1
 
         addChild(node)
-
     }
 }

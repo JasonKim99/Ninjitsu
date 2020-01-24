@@ -18,6 +18,7 @@ class GameStateMachine: GKState {
         self.jieyin_Group = jieyin_Group
         self.ninjitsu_Button = ninjitsu_Button
         self.jieyin_Cancel = jieyin_Cancel
+
         super.init()
     }
 }
@@ -30,6 +31,7 @@ class DefaultState: GameStateMachine {
     override func didEnter(from previousState: GKState?) {
         jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
         jieyin_Group.run(.fadeOut(withDuration: 0.1))
+        jieyin_Group.isHidden = true
         ninjitsu_Button.run(.fadeIn(withDuration: 0.1))
     }
 }
@@ -47,6 +49,7 @@ class SpellingState: GameStateMachine {
     }
     override func didEnter(from previousState: GKState?) {
         ninjitsu_Button.run(.fadeOut(withDuration: 0.1))
+        jieyin_Group.isHidden = false
         jieyin_Group.run(.fadeIn(withDuration: 0.1))
         jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
     }
@@ -59,7 +62,11 @@ class NinjitsuAnimatingState: GameStateMachine {
         if stateClass is DefaultState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
-        
+        jieyin_Group.run(.fadeOut(withDuration: 0.1))
+        jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
+        Timer.scheduledTimer(withTimeInterval: 3, repeats: false) {_ in
+            self.stateMachine?.enter(DefaultState.self)
+        }
     }
 }
 
