@@ -32,13 +32,18 @@ class DefaultState: GameStateMachine {
         jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
         jieyin_Group.run(.fadeOut(withDuration: 0.1))
         jieyin_Group.isHidden = true
+        jieyin_Cancel.isHidden = true
+        ninjitsu_Button.isHidden = false
+        ninjitsu_Button.alpha = 0
         ninjitsu_Button.run(.fadeIn(withDuration: 0.1))
+        
     }
 }
 
 //MARK: - 结印状态
 
 class SpellingState: GameStateMachine {
+    var spellingTime : TimeInterval = 10
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
         case is DefaultState.Type, is NinjitsuAnimatingState.Type:
@@ -49,7 +54,11 @@ class SpellingState: GameStateMachine {
     }
     override func didEnter(from previousState: GKState?) {
         ninjitsu_Button.run(.fadeOut(withDuration: 0.1))
+        ninjitsu_Button.isHidden = true
         jieyin_Group.isHidden = false
+        jieyin_Cancel.isHidden = false
+        jieyin_Group.alpha = 0
+        jieyin_Cancel.alpha = 0
         jieyin_Group.run(.fadeIn(withDuration: 0.1))
         jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
     }
@@ -64,6 +73,9 @@ class NinjitsuAnimatingState: GameStateMachine {
     override func didEnter(from previousState: GKState?) {
         jieyin_Group.run(.fadeOut(withDuration: 0.1))
         jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
+        jieyin_Group.isHidden = true
+        jieyin_Cancel.isHidden = true
+        ninjitsu_Button.isHidden = true
     }
 }
 

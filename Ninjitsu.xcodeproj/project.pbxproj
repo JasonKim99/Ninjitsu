@@ -19,6 +19,8 @@
 		E0AF0BB623D8858D00C8A2A4 /* NinjitsuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0BB523D8858D00C8A2A4 /* NinjitsuUITests.swift */; };
 		E0B09F2A23D9C01A00CD707B /* Ninpo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B09F2923D9C01A00CD707B /* Ninpo.swift */; };
 		E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B09F2B23D9C1C100CD707B /* YinShi.swift */; };
+		E0B09F2D23DB317C00CD707B /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
+		E0B09F2E23DB317D00CD707B /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0FAFA8E23D89C4700BB114A /* Test.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8D23D89C4700BB114A /* Test.sks */; };
 		E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */; };
@@ -267,6 +269,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0B09F2D23DB317C00CD707B /* WawaSC-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +277,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0B09F2E23DB317D00CD707B /* WawaSC-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

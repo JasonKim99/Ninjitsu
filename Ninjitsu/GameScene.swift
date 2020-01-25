@@ -29,11 +29,11 @@ class GameScene: SKScene {
     var hai : SKNode!
     var jieyinLabel : SKLabelNode?
     var ninpoLabel : SKLabelNode?
-    
+    var spellingTimeLabel : SKLabelNode?
     //stats
     var twelveYin :[SKNode? : String] = [:]
     var jieyin = ""
-    
+    var spellingTime : TimeInterval = 10
     
     
     //Bool
@@ -54,11 +54,17 @@ class GameScene: SKScene {
         ])
         
         gameStateMachine.enter(DefaultState.self)
+        
+//        查询字体名字
+//        for family in UIFont.familyNames.sorted() {
+//            let names = UIFont.fontNames(forFamilyName: family)
+//            print("Family: \(family) Font names: \(names)")
+//        }
 
     }
     
     override func update(_ currentTime: TimeInterval) {
-        
+
     }
 }
 
@@ -83,7 +89,12 @@ extension GameScene {
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
+        
+        //结印Label
         jieyinLabel = generateText(from: jieyin, xPosition: 0, yPosition: 200)
+        
+        //倒计时Label
+        spellingTimeLabel = generateText(from: String(spellingTime), xPosition: 0, yPosition: 350)
     }
 }
 
@@ -97,31 +108,59 @@ extension GameScene{
         for touch in touches {
             let location = touch.location(in: self)
             
-            //开始结印
-            if ninjitsu_Button.contains(location) && !isSpelling {
-                gameStateMachine.enter(SpellingState.self)
-                isSpelling = true
-            }
-            //结印ing
-            if isSpelling {
+            
+            if !isSpelling { //如果没有结印
+                if ninjitsu_Button.contains(location) && ninjitsu_Button.isHidden == false{
+                    isSpelling = true
+                    gameStateMachine.enter(SpellingState.self)
+                }
+                
+            } else { //如果开始结印
+
                 for yinshi in twelveYin {
                     if yinshi.key!.contains(location) {
                         jieyin += yinshi.value
-                        
                     }
                 }
+                
+                if jieyin_Cancel.contains(location) && jieyin_Cancel.isHidden == false{
+                    isSpelling = false
+                    jieyin = ""
+                    jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+                    gameStateMachine.enter(DefaultState.self)
+                }
+                
                 //显示结印内容
                 updateText(text: jieyin, node: &jieyinLabel!)
             }
 
-            //是否取消了结印
-            if jieyin_Cancel.contains(location) && jieyin_Cancel.alpha == 1{
-                gameStateMachine.enter(DefaultState.self)
-
-                isSpelling = false
-                jieyin = ""
-                jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-            }
+            
+            
+//            //开始结印
+//            if ninjitsu_Button.contains(location) && !isSpelling {
+//                gameStateMachine.enter(SpellingState.self)
+//                isSpelling = true
+//            }
+//            //结印ing
+//            if isSpelling {
+//                for yinshi in twelveYin {
+//                    if yinshi.key!.contains(location) {
+//                        jieyin += yinshi.value
+//
+//                    }
+//                }
+//                //显示结印内容
+//                updateText(text: jieyin, node: &jieyinLabel!)
+//            }
+//
+//            //是否取消了结印
+//            if jieyin_Cancel.contains(location) && jieyin_Cancel.alpha == 1{
+//                gameStateMachine.enter(DefaultState.self)
+//
+//                isSpelling = false
+//                jieyin = ""
+//                jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+//            }
             
         }
         
@@ -137,17 +176,16 @@ extension GameScene{
             gameStateMachine.enter(NinjitsuAnimatingState.self)
             jieyinLabel?.run(.fadeOut(withDuration: 0.2))
             //显示忍法名称
-            var ninpoNameText = ninpoDict[jieyin]!.element.rawValue + " • " + ninpoDict[jieyin]!.ninponame
+            let ninpoNameText = ninpoDict[jieyin]!.element.rawValue + " • " + ninpoDict[jieyin]!.ninponame
             ninpoLabel = generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
             addChild(ninpoLabel!)
-            ninpoLabel?.run(.scale(by: 1.5, duration: 0.2))
+            ninpoLabel?.run(.scale(by: 1.8, duration: 0.1))
             Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false){_ in
-                ninpoNameText = ""
                 self.jieyin = ""
                 self.ninpoLabel!.removeFromParent()
                 self.gameStateMachine.enter(DefaultState.self)
             }
-            
+
         }
 
     }
@@ -163,7 +201,7 @@ extension GameScene {
         let newnode = SKLabelNode()
         newnode.position = CGPoint(x: xPosition, y: yPosition)
         newnode.fontColor = .white
-        newnode.fontName = "WawaSC-Regular"
+        newnode.fontName = "DFWaWaSC-W5"
         newnode.fontSize = 32
         newnode.text = text
         return newnode
@@ -189,4 +227,10 @@ extension GameScene {
 
         addChild(node)
     }
+    
+    // 显示忍法名称
+    func showNinpoText() {
+        
+    }
+    
 }
