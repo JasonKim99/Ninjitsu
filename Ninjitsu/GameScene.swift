@@ -48,9 +48,9 @@ class GameScene: SKScene {
         loadUI()
         
         gameStateMachine = GKStateMachine(states: [
-            DefaultState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel),
-            SpellingState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel),
-            NinjitsuAnimatingState(jieyin_Group: jieyin_Group, ninjitsu_Button : ninjitsu_Button, jieyin_Cancel : jieyin_Cancel)
+            DefaultState(scene: self),
+            SpellingState( scene: self),
+            NinjitsuAnimatingState(scene: self)
         ])
         
         gameStateMachine.enter(DefaultState.self)
@@ -109,30 +109,60 @@ extension GameScene{
             let location = touch.location(in: self)
             
             
-            if !isSpelling { //如果没有结印
-                if ninjitsu_Button.contains(location) && ninjitsu_Button.isHidden == false{
-                    isSpelling = true
-                    gameStateMachine.enter(SpellingState.self)
-                }
+            
+            if gameStateMachine.currentState is DefaultState {
+                //默认状态
                 
-            } else { //如果开始结印
-
+                //如果点击忍法
+                if ninjitsu_Button.contains(location){
+                    gameStateMachine.enter(SpellingState.self)
+                    
+                }
+            } else if gameStateMachine.currentState is SpellingState {
+                //结印中
+                
+                //如果点击到印式,存下来
                 for yinshi in twelveYin {
                     if yinshi.key!.contains(location) {
                         jieyin += yinshi.value
                     }
                 }
                 
-                if jieyin_Cancel.contains(location) && jieyin_Cancel.isHidden == false{
-                    isSpelling = false
+                //如果点到了取消按钮,返回默认状态
+                if jieyin_Cancel.contains(location) {
                     jieyin = ""
                     jieyinLabel?.run(.fadeOut(withDuration: 0.2))
                     gameStateMachine.enter(DefaultState.self)
                 }
                 
-                //显示结印内容
+                //每次点击更新所节的印
                 updateText(text: jieyin, node: &jieyinLabel!)
             }
+
+            
+//            if !isSpelling {
+//                if ninjitsu_Button.contains(location) && gameStateMachine.currentState is DefaultState{
+//                    gameStateMachine.enter(SpellingState.self)
+//                }
+//                
+//            } else { //如果开始结印
+//
+//                for yinshi in twelveYin {
+//                    if yinshi.key!.contains(location) {
+//                        jieyin += yinshi.value
+//                    }
+//                }
+//
+//                if jieyin_Cancel.contains(location) && gameStateMachine.currentState is SpellingState{
+//                    isSpelling = false
+//                    jieyin = ""
+//                    jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+//                    gameStateMachine.enter(DefaultState.self)
+//                }
+//
+//                //显示结印内容
+//                updateText(text: jieyin, node: &jieyinLabel!)
+//            }
 
             
             

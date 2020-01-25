@@ -10,15 +10,10 @@ import Foundation
 import GameplayKit
 
 class GameStateMachine: GKState {
-    unowned var jieyin_Group : SKNode
-    unowned var ninjitsu_Button : SKNode
-    unowned var jieyin_Cancel : SKNode
+    unowned var scene: GameScene
     
-    init(jieyin_Group: SKNode, ninjitsu_Button : SKNode, jieyin_Cancel : SKNode) {
-        self.jieyin_Group = jieyin_Group
-        self.ninjitsu_Button = ninjitsu_Button
-        self.jieyin_Cancel = jieyin_Cancel
-
+    init(scene : GameScene) {
+        self.scene = scene
         super.init()
     }
 }
@@ -29,13 +24,19 @@ class DefaultState: GameStateMachine {
         if stateClass is SpellingState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
-        jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-        jieyin_Group.run(.fadeOut(withDuration: 0.1))
-        jieyin_Group.isHidden = true
-        jieyin_Cancel.isHidden = true
-        ninjitsu_Button.isHidden = false
-        ninjitsu_Button.alpha = 0
-        ninjitsu_Button.run(.fadeIn(withDuration: 0.1))
+        
+        scene.isSpelling = false
+        scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
+        scene.jieyin_Group.run(.fadeOut(withDuration: 0.1))
+        scene.jieyin_Group.isHidden = true
+        scene.jieyin_Cancel.isHidden = true
+        scene.ninjitsu_Button.isHidden = false
+        scene.ninjitsu_Button.alpha = 0
+        scene.ninjitsu_Button.run(.fadeIn(withDuration: 0.1))
+        
+    }
+    
+    override func willExit(to nextState: GKState) {
         
     }
 }
@@ -53,14 +54,24 @@ class SpellingState: GameStateMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        ninjitsu_Button.run(.fadeOut(withDuration: 0.1))
-        ninjitsu_Button.isHidden = true
-        jieyin_Group.isHidden = false
-        jieyin_Cancel.isHidden = false
-        jieyin_Group.alpha = 0
-        jieyin_Cancel.alpha = 0
-        jieyin_Group.run(.fadeIn(withDuration: 0.1))
-        jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
+
+        scene.isSpelling = true
+        scene.ninjitsu_Button.isHidden = true
+        scene.jieyin_Group.isHidden = false
+        scene.jieyin_Cancel.isHidden = false
+        scene.jieyin_Group.run(.fadeIn(withDuration: 0.1))
+        scene.jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
+        
+//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true){_ in
+//            if self.spellingTime > 0 {
+//                self.scene.updateText(text: String(self.spellingTime), node: &self.scene.spellingTimeLabel!)
+//                self.spellingTime -= 1
+//            } else {
+//                self.scene.spellingTimeLabel?.removeFromParent()
+//                self.stateMachine?.enter(DefaultState.self)
+//            }
+//
+//        }
     }
 }
 
@@ -71,11 +82,11 @@ class NinjitsuAnimatingState: GameStateMachine {
         if stateClass is DefaultState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
-        jieyin_Group.run(.fadeOut(withDuration: 0.1))
-        jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-        jieyin_Group.isHidden = true
-        jieyin_Cancel.isHidden = true
-        ninjitsu_Button.isHidden = true
+        scene.jieyin_Group.run(.fadeOut(withDuration: 0.1))
+        scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
+        scene.jieyin_Group.isHidden = true
+        scene.jieyin_Cancel.isHidden = true
+        scene.ninjitsu_Button.isHidden = true
     }
 }
 
