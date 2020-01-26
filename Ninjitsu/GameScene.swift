@@ -29,11 +29,11 @@ class GameScene: SKScene {
     var hai : SKNode!
     var jieyinLabel : SKLabelNode?
     var ninpoLabel : SKLabelNode?
-    var spellingTimeLabel : SKLabelNode?
+    var timeRemainingLabel : SKLabelNode?
     //stats
     var twelveYin :[SKNode? : String] = [:]
     var jieyin = ""
-    var spellingTime : TimeInterval = 10
+    var timeRemaining : TimeInterval = 10
     
     
     //Bool
@@ -94,7 +94,7 @@ extension GameScene {
         jieyinLabel = generateText(from: jieyin, xPosition: 0, yPosition: 200)
         
         //倒计时Label
-        spellingTimeLabel = generateText(from: String(spellingTime), xPosition: 0, yPosition: 350)
+        timeRemainingLabel = generateText(from: String(timeRemaining), xPosition: 0, yPosition: 350)
     }
 }
 
@@ -130,8 +130,6 @@ extension GameScene{
                 
                 //如果点到了取消按钮,返回默认状态
                 if jieyin_Cancel.contains(location) {
-                    jieyin = ""
-                    jieyinLabel?.run(.fadeOut(withDuration: 0.2))
                     gameStateMachine.enter(DefaultState.self)
                 }
                 
@@ -140,58 +138,6 @@ extension GameScene{
             }
 
             
-//            if !isSpelling {
-//                if ninjitsu_Button.contains(location) && gameStateMachine.currentState is DefaultState{
-//                    gameStateMachine.enter(SpellingState.self)
-//                }
-//                
-//            } else { //如果开始结印
-//
-//                for yinshi in twelveYin {
-//                    if yinshi.key!.contains(location) {
-//                        jieyin += yinshi.value
-//                    }
-//                }
-//
-//                if jieyin_Cancel.contains(location) && gameStateMachine.currentState is SpellingState{
-//                    isSpelling = false
-//                    jieyin = ""
-//                    jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-//                    gameStateMachine.enter(DefaultState.self)
-//                }
-//
-//                //显示结印内容
-//                updateText(text: jieyin, node: &jieyinLabel!)
-//            }
-
-            
-            
-//            //开始结印
-//            if ninjitsu_Button.contains(location) && !isSpelling {
-//                gameStateMachine.enter(SpellingState.self)
-//                isSpelling = true
-//            }
-//            //结印ing
-//            if isSpelling {
-//                for yinshi in twelveYin {
-//                    if yinshi.key!.contains(location) {
-//                        jieyin += yinshi.value
-//
-//                    }
-//                }
-//                //显示结印内容
-//                updateText(text: jieyin, node: &jieyinLabel!)
-//            }
-//
-//            //是否取消了结印
-//            if jieyin_Cancel.contains(location) && jieyin_Cancel.alpha == 1{
-//                gameStateMachine.enter(DefaultState.self)
-//
-//                isSpelling = false
-//                jieyin = ""
-//                jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-//            }
-            
         }
         
     }
@@ -199,24 +145,6 @@ extension GameScene{
         
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if ninpoDict.keys.contains(jieyin) && isSpelling {
-            //结印符合进行施法
-            isSpelling = false
-            gameStateMachine.enter(NinjitsuAnimatingState.self)
-            jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-            //显示忍法名称
-            let ninpoNameText = ninpoDict[jieyin]!.element.rawValue + " • " + ninpoDict[jieyin]!.ninponame
-            ninpoLabel = generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
-            addChild(ninpoLabel!)
-            ninpoLabel?.run(.scale(by: 1.8, duration: 0.1))
-            Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false){_ in
-                self.jieyin = ""
-                self.ninpoLabel!.removeFromParent()
-                self.gameStateMachine.enter(DefaultState.self)
-            }
-
-        }
 
     }
     
@@ -256,11 +184,6 @@ extension GameScene {
         node.alpha = 1
 
         addChild(node)
-    }
-    
-    // 显示忍法名称
-    func showNinpoText() {
-        
     }
     
 }
