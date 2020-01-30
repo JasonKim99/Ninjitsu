@@ -10,16 +10,16 @@ import Foundation
 import SpriteKit
 
 class Ninpo {
-    var jieyin : String
-    var isConverToNinpo : Bool {
-        if ninpoDict.keys.contains(jieyin) {
+    static var jieyin : String = ""
+    var isConvertableToNinpo : Bool {
+        if ninpoDict.keys.contains(Ninpo.jieyin) {
             return true
         }
         return false
     }
     
     init(jieyin: String) {
-        self.jieyin = jieyin
+        Ninpo.self.jieyin = jieyin
     }
     
 }
@@ -33,7 +33,7 @@ enum Element: String {
 }
 
 var ninpoDict : [String : (element: Element, ninponame: String)] = [
-    "子丑" : (element: .Huo, ninponame: "火球の术"),
+    "子丑" : (element: .Huo, ninponame: "豪火球の术"),
     "寅巳寅巳寅巳" : (element: .Shui, ninponame: "水阵壁")
 ]
 //enum Ninjitsu: String{

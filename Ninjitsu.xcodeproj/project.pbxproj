@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E0871FA623E2ECF5009258E7 /* sasuke.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E0871FA523E2ECF5009258E7 /* sasuke.atlas */; };
 		E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */; };
 		E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */; };
-		E0AF0B9423D8858B00C8A2A4 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9323D8858B00C8A2A4 /* Actions.sks */; };
 		E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */; };
 		E0AF0B9823D8858B00C8A2A4 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B9723D8858B00C8A2A4 /* GameViewController.swift */; };
 		E0AF0B9B23D8858B00C8A2A4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9923D8858B00C8A2A4 /* Main.storyboard */; };
@@ -21,6 +21,16 @@
 		E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B09F2B23D9C1C100CD707B /* YinShi.swift */; };
 		E0B09F2D23DB317C00CD707B /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0B09F2E23DB317D00CD707B /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
+		E0B09F3A23E1771F00CD707B /* smoke.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3823E1771F00CD707B /* smoke.sks */; };
+		E0B09F3B23E1771F00CD707B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3923E1771F00CD707B /* Assets.xcassets */; };
+		E0B09F3D23E1773A00CD707B /* bokeh.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3C23E1773A00CD707B /* bokeh.sks */; };
+		E0B09F3F23E1777200CD707B /* firefly.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3E23E1777200CD707B /* firefly.sks */; };
+		E0B09F4123E1779B00CD707B /* magic.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4023E1779B00CD707B /* magic.sks */; };
+		E0B09F4323E177BD00CD707B /* rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4223E177BD00CD707B /* rain.sks */; };
+		E0B09F4523E177F900CD707B /* snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4423E177F900CD707B /* snow.sks */; };
+		E0B09F4723E1780E00CD707B /* spark.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4623E1780E00CD707B /* spark.sks */; };
+		E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4A23E1AD5B00CD707B /* fire.sks */; };
+		E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4C23E1C00800CD707B /* fire1.sks */; };
 		E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0FAFA8E23D89C4700BB114A /* Test.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8D23D89C4700BB114A /* Test.sks */; };
 		E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */; };
@@ -44,10 +54,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E0871FA523E2ECF5009258E7 /* sasuke.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = sasuke.atlas; path = ../../../../Desktop/sasuke.atlas; sourceTree = "<group>"; };
 		E0AF0B8C23D8858B00C8A2A4 /* Ninjitsu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ninjitsu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		E0AF0B9323D8858B00C8A2A4 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		E0AF0B9723D8858B00C8A2A4 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		E0AF0B9A23D8858B00C8A2A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -62,6 +72,16 @@
 		E0AF0BB723D8858D00C8A2A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0B09F2923D9C01A00CD707B /* Ninpo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ninpo.swift; sourceTree = "<group>"; };
 		E0B09F2B23D9C1C100CD707B /* YinShi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YinShi.swift; sourceTree = "<group>"; };
+		E0B09F3823E1771F00CD707B /* smoke.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = smoke.sks; sourceTree = "<group>"; };
+		E0B09F3923E1771F00CD707B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0B09F3C23E1773A00CD707B /* bokeh.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = bokeh.sks; sourceTree = "<group>"; };
+		E0B09F3E23E1777200CD707B /* firefly.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = firefly.sks; sourceTree = "<group>"; };
+		E0B09F4023E1779B00CD707B /* magic.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = magic.sks; sourceTree = "<group>"; };
+		E0B09F4223E177BD00CD707B /* rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = rain.sks; sourceTree = "<group>"; };
+		E0B09F4423E177F900CD707B /* snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = snow.sks; sourceTree = "<group>"; };
+		E0B09F4623E1780E00CD707B /* spark.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = spark.sks; sourceTree = "<group>"; };
+		E0B09F4A23E1AD5B00CD707B /* fire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire.sks; sourceTree = "<group>"; };
+		E0B09F4C23E1C00800CD707B /* fire1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire1.sks; sourceTree = "<group>"; };
 		E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WawaSC-Regular.otf"; sourceTree = "<group>"; };
 		E0FAFA8D23D89C4700BB114A /* Test.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Test.sks; sourceTree = "<group>"; };
 		E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateMachine.swift; sourceTree = "<group>"; };
@@ -120,7 +140,8 @@
 				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
 				E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */,
-				E0AF0B9323D8858B00C8A2A4 /* Actions.sks */,
+				E0871FA523E2ECF5009258E7 /* sasuke.atlas */,
+				E0B09F3723E176EE00CD707B /* particleeffect */,
 				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
 				E0B09F2B23D9C1C100CD707B /* YinShi.swift */,
 				E0AF0B9723D8858B00C8A2A4 /* GameViewController.swift */,
@@ -149,6 +170,23 @@
 				E0AF0BB723D8858D00C8A2A4 /* Info.plist */,
 			);
 			path = NinjitsuUITests;
+			sourceTree = "<group>";
+		};
+		E0B09F3723E176EE00CD707B /* particleeffect */ = {
+			isa = PBXGroup;
+			children = (
+				E0B09F3823E1771F00CD707B /* smoke.sks */,
+				E0B09F3E23E1777200CD707B /* firefly.sks */,
+				E0B09F4A23E1AD5B00CD707B /* fire.sks */,
+				E0B09F4223E177BD00CD707B /* rain.sks */,
+				E0B09F4423E177F900CD707B /* snow.sks */,
+				E0B09F4623E1780E00CD707B /* spark.sks */,
+				E0B09F4023E1779B00CD707B /* magic.sks */,
+				E0B09F3C23E1773A00CD707B /* bokeh.sks */,
+				E0B09F4C23E1C00800CD707B /* fire1.sks */,
+				E0B09F3923E1771F00CD707B /* Assets.xcassets */,
+			);
+			path = particleeffect;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,13 +293,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0B09F4123E1779B00CD707B /* magic.sks in Resources */,
 				E0AF0B9B23D8858B00C8A2A4 /* Main.storyboard in Resources */,
+				E0B09F4523E177F900CD707B /* snow.sks in Resources */,
+				E0B09F3A23E1771F00CD707B /* smoke.sks in Resources */,
+				E0B09F3B23E1771F00CD707B /* Assets.xcassets in Resources */,
+				E0B09F4323E177BD00CD707B /* rain.sks in Resources */,
 				E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */,
+				E0B09F3D23E1773A00CD707B /* bokeh.sks in Resources */,
+				E0B09F4723E1780E00CD707B /* spark.sks in Resources */,
 				E0FAFA8E23D89C4700BB114A /* Test.sks in Resources */,
+				E0B09F3F23E1777200CD707B /* firefly.sks in Resources */,
 				E0AF0B9D23D8858D00C8A2A4 /* Assets.xcassets in Resources */,
+				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,
+				E0871FA623E2ECF5009258E7 /* sasuke.atlas in Resources */,
+				E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */,
 				E0AF0BA023D8858D00C8A2A4 /* LaunchScreen.storyboard in Resources */,
 				E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */,
-				E0AF0B9423D8858B00C8A2A4 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

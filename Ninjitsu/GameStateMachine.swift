@@ -25,6 +25,8 @@ class DefaultState: GameStateMachine {
         if stateClass is SpellingState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
+        scene.player = scene.addSasuke()
+        scene.addChild(scene.player!)
         scene.jieyin = ""
         scene.isSpelling = false
         scene.jieyin_Group.isHidden = true
@@ -71,7 +73,7 @@ class SpellingState: GameStateMachine {
 
     }
     override func willExit(to nextState: GKState) {
-        
+        scene.player?.removeFromParent()
         timer.invalidate()
         self.scene.timeRemainingLabel!.removeFromParent()
     }
@@ -86,6 +88,7 @@ class NinjitsuAnimatingState: GameStateMachine {
         if stateClass is DefaultState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
+        scene.addperformNinpo(from: &scene.player!)
         scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
         //显示忍法名称
         let ninpoNameText = ninpoDict[scene.jieyin]!.element.rawValue + " • " + ninpoDict[scene.jieyin]!.ninponame
@@ -98,14 +101,15 @@ class NinjitsuAnimatingState: GameStateMachine {
         scene.jieyin_Cancel.isHidden = true
         scene.ninjitsu_Button.isHidden = true
         
-        timer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false){_ in
-            self.scene.jieyin = ""
-            self.scene.ninpoLabel!.removeFromParent()
+        timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false){_ in
             self.stateMachine!.enter(DefaultState.self)
         }
     }
     override func willExit(to nextState: GKState) {
         timer.invalidate()
+        self.scene.jieyin = ""
+        self.scene.ninpoLabel!.removeFromParent()
+        scene.player?.removeFromParent()
     }
 }
 

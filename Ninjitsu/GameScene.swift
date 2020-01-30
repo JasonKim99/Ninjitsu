@@ -8,6 +8,8 @@
 
 import SpriteKit
 import GameplayKit
+import UIKit
+
 
 class GameScene: SKScene {
     
@@ -34,7 +36,7 @@ class GameScene: SKScene {
     var twelveYin :[SKNode? : String] = [:]
     var jieyin = ""
     var timeRemaining : TimeInterval = 10
-    
+    var player : SKSpriteNode?
     
     //Bool
     var isSpelling = false //是否在吟唱中
@@ -60,7 +62,7 @@ class GameScene: SKScene {
 //            let names = UIFont.fontNames(forFamilyName: family)
 //            print("Family: \(family) Font names: \(names)")
 //        }
-
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -88,6 +90,7 @@ extension GameScene {
         you = jieyin_Group.childNode(withName: "jieyin_you")!
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
+        
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
         
         //结印Label
@@ -95,6 +98,9 @@ extension GameScene {
         
         //倒计时Label
         timeRemainingLabel = generateText(from: String(timeRemaining), xPosition: 0, yPosition: 350)
+        
+        
+        
     }
 }
 
@@ -136,10 +142,10 @@ extension GameScene{
                 //每次点击更新所节的印
                 updateText(text: jieyin, node: &jieyinLabel!)
             }
-
+            
             
         }
-        
+//        addfire()
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -186,4 +192,132 @@ extension GameScene {
         addChild(node)
     }
     
+    func addSasuke()->SKSpriteNode{
+        var textureArray :[SKTexture] = []
+        for i in 1...4{
+            textureArray.append(SKTexture.init(imageNamed: "Idle\(i)"))
+        }
+        
+        let node = SKSpriteNode(texture: textureArray[0])
+        node.size = CGSize(width: 60, height: 60)
+        node.position = CGPoint(x: -300, y: 0)
+        node.xScale = 2
+        node.yScale = 2
+        node.run(.repeatForever(.animate(with: textureArray, timePerFrame: 0.2)))
+        return node
+        
+    }
+    
+    func addperformNinpo(from node: inout SKSpriteNode){
+        
+        //新动画
+        var textureArray :[SKTexture] = []
+        for i in 1...4{
+            textureArray.append(SKTexture.init(imageNamed: "Ninpo\(i)"))
+        }
+        
+        //node的改动
+        let size = node.size
+        let position = node.position
+//        let zPosition = node.zPosition
+//        let xScale = node.xScale
+//        let yScale = node.yScale
+        node.removeFromParent()
+        
+        node = SKSpriteNode(texture: textureArray[0])
+        node.size = size
+        node.position = position
+//        newnode.zPosition = zPosition
+        node.xScale = xScale
+        node.yScale = yScale
+        addChild(node)
+        
+        node.run(.sequence([
+            .animate(with: textureArray, timePerFrame: 0.15),
+            .run {
+                self.addfire()
+            }
+        ])
+        )
+
+    }
+    
+    
+    
+    func addfire(){
+        if let fire = SKEmitterNode(fileNamed: "fire1") {
+            fire.position = CGPoint(x: -120, y: .zero)
+            fire.zPosition = 5
+            let physicsBody = SKPhysicsBody(circleOfRadius: 10)
+            fire.physicsBody = physicsBody
+            physicsBody.affectedByGravity = false
+//            physicsBody.velocity = CGVector(dx: 100, dy: 200)
+            
+            addChild(fire)
+            fire.run(.sequence([
+                .moveTo(x: 300, duration: 1),
+                .wait(forDuration: 2),
+                .fadeOut(withDuration: 0.5),
+                .removeFromParent()
+            ]))
+            
+
+            
+        }
+    }
+    
+
+    
+//    func animateNinpo() {
+//        let textureAtlas = SKTextureAtlas(named: "Gaara")
+//        var textureArray = [SKTexture]()
+//        for i in 1...textureAtlas.textureNames.count{
+//            let name = "test\(i).png"
+//            textureArray.append(SKTexture(imageNamed: name))
+//        }
+//
+//
+//
+//        var texture = Array<SKTexture>()
+//        var texture1 = Array<SKTexture>()
+//        let gaara = UIImage(named:"Gaara")!
+//
+//        let gaaracropped1 = gaara.cgImage?.cropping(to: CGRect(x: 439, y: 512-213, width: 36, height: 76))
+//        let gaaracropped2 = gaara.cgImage?.cropping(to: CGRect(x: 390, y: 512-(275+76), width: 36, height: 76))
+//        let gaaracropped3 = gaara.cgImage?.cropping(to: CGRect(x: 352, y: 512-(275+76), width: 36, height: 76))
+//        let gaaracropped4 = gaara.cgImage?.cropping(to: CGRect(x: 496, y: 512-(2+76), width: 36, height: 76))
+//        let gaaracropped5 = gaara.cgImage?.cropping(to: CGRect(x: 458, y: 512-(2+76), width: 36, height: 76))
+//        let gaaracropped6 = gaara.cgImage?.cropping(to: CGRect(x: 401, y: 512-(140+76), width: 36, height: 76))
+//        texture.append( SKTexture.init(cgImage: gaaracropped1!))
+//        texture.append( SKTexture.init(cgImage: gaaracropped2!))
+//        texture.append( SKTexture.init(cgImage: gaaracropped3!))
+//        texture.append( SKTexture.init(cgImage: gaaracropped4!))
+//        texture.append( SKTexture.init(cgImage: gaaracropped5!))
+//        texture.append( SKTexture.init(cgImage: gaaracropped6!))
+//
+//        let testnode = SKSpriteNode(texture: SKTexture.init(cgImage: gaaracropped1!))
+//        testnode.setScale(2)
+//        testnode.position = CGPoint(x: -200 , y:.zero)
+//        addChild(testnode)
+//        testnode.run(.repeatForever(.animate(with: texture, timePerFrame: 0.1)))
+//
+//        let skillcropped1 = gaara.cgImage?.cropping(to: CGRect(x: 379, y: 512-(76+2), width: 36, height: 76))
+//        let skillcropped2 = gaara.cgImage?.cropping(to: CGRect(x: 336, y: 512-(76+2), width: 36, height: 76))
+//        let skillcropped3 = gaara.cgImage?.cropping(to: CGRect(x: 352, y: 512-(76+140), width: 36, height: 76))
+//        let skillcropped4 = gaara.cgImage?.cropping(to: CGRect(x: 420, y: 512-(76+2), width: 36, height: 76))
+//        texture1.append(SKTexture.init(cgImage: skillcropped1!))
+//        texture1.append(SKTexture.init(cgImage: skillcropped2!))
+//        texture1.append(SKTexture.init(cgImage: skillcropped3!))
+//        texture1.append(SKTexture.init(cgImage: skillcropped4!))
+//
+//        let testnode1 = SKSpriteNode(texture: SKTexture.init(cgImage: skillcropped1!))
+//        testnode1.setScale(2)
+//        testnode1.position = CGPoint(x: 200 , y:.zero)
+//        addChild(testnode1)
+//        testnode1.run(.repeatForever(.animate(with: texture1, timePerFrame: 0.1)))
+//
+//
+//    }
+    
 }
+
