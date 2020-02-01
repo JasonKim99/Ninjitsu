@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E0871FA623E2ECF5009258E7 /* sasuke.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E0871FA523E2ECF5009258E7 /* sasuke.atlas */; };
+		E078BE7323E51A1700DA4BA7 /* JumpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E078BE7223E51A1700DA4BA7 /* JumpButton.swift */; };
 		E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */; };
 		E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */; };
 		E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */; };
@@ -54,7 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E0871FA523E2ECF5009258E7 /* sasuke.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = sasuke.atlas; path = ../../../../Desktop/sasuke.atlas; sourceTree = "<group>"; };
+		E078BE7223E51A1700DA4BA7 /* JumpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpButton.swift; sourceTree = "<group>"; };
 		E0AF0B8C23D8858B00C8A2A4 /* Ninjitsu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ninjitsu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -140,9 +140,9 @@
 				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
 				E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */,
-				E0871FA523E2ECF5009258E7 /* sasuke.atlas */,
 				E0B09F3723E176EE00CD707B /* particleeffect */,
 				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
+				E078BE7223E51A1700DA4BA7 /* JumpButton.swift */,
 				E0B09F2B23D9C1C100CD707B /* YinShi.swift */,
 				E0AF0B9723D8858B00C8A2A4 /* GameViewController.swift */,
 				E0AF0B9923D8858B00C8A2A4 /* Main.storyboard */,
@@ -306,7 +306,6 @@
 				E0B09F3F23E1777200CD707B /* firefly.sks in Resources */,
 				E0AF0B9D23D8858D00C8A2A4 /* Assets.xcassets in Resources */,
 				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,
-				E0871FA623E2ECF5009258E7 /* sasuke.atlas in Resources */,
 				E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */,
 				E0AF0BA023D8858D00C8A2A4 /* LaunchScreen.storyboard in Resources */,
 				E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */,
@@ -338,6 +337,7 @@
 			files = (
 				E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */,
 				E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */,
+				E078BE7323E51A1700DA4BA7 /* JumpButton.swift in Sources */,
 				E0B09F2A23D9C01A00CD707B /* Ninpo.swift in Sources */,
 				E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */,
 				E0AF0B9823D8858B00C8A2A4 /* GameViewController.swift in Sources */,

@@ -32,30 +32,54 @@ class GameScene: SKScene {
     var jieyinLabel : SKLabelNode?
     var ninpoLabel : SKLabelNode?
     var timeRemainingLabel : SKLabelNode?
+    var joystick: SKNode?
+    var joystickKnob: SKNode?
+    let jumpButton = JumpButton()
+    var player : SKSpriteNode!
+    var cameraNode : SKCameraNode?
+    
     //stats
     var twelveYin :[SKNode? : String] = [:]
     var jieyin = ""
-    var timeRemaining : TimeInterval = 10
-    var player : SKSpriteNode?
+    var timeRemaining : TimeInterval = 10 //结印倒计时
+    var knobRadius : CGFloat = 70 //摇杆半径
+    var jumpCount : Int = 2 //跳跃次数
+    var jumpForceY : Double = 250 //跳跃力量
     
     //Bool
     var isSpelling = false //是否在吟唱中
+    var isKnobMoving = false //是否在控制摇杆
+    var isFacingRight = true //是否面向右侧
+    var isInTheAir = false //是否在空中
     
+    // Sprite Engine
+    var previousTimeInterval : TimeInterval = 0
+    let playerSpeed : Double = 6.0
+    
+    
+    //Touches
+    var selectedNodes: [UITouch : SKSpriteNode] = [ : ]
     
     //GameState
     var gameStateMachine : GKStateMachine!
     
     override func didMove(to view: SKView) {
         
+        physicsWorld.contactDelegate = self
+        
+        
         loadUI()
         
         gameStateMachine = GKStateMachine(states: [
-            DefaultState(scene: self),
+            IdleState(scene: self),
+            RunningState( scene: self),
+            JumpingState( scene: self),
+            LandingState( scene: self),
             SpellingState( scene: self),
             NinjitsuAnimatingState(scene: self)
         ])
         
-        gameStateMachine.enter(DefaultState.self)
+//        gameStateMachine.enter(IdleState.self)
         
 //        查询字体名字
 //        for family in UIFont.familyNames.sorted() {
@@ -64,8 +88,66 @@ class GameScene: SKScene {
 //        }
         
     }
+
+    //MARK: - GameLoop
     
     override func update(_ currentTime: TimeInterval) {
+        
+        //Camera
+        cameraNode?.position.x = player.position.x + 300
+        joystick?.position.y = cameraNode!.position.y - 240
+        joystick?.position.x = cameraNode!.position.x - 480
+        ninjitsu_Button.position.y = cameraNode!.position.y - 220
+        ninjitsu_Button.position.x = cameraNode!.position.x + 480
+        jieyin_Cancel.position.y = cameraNode!.position.y - 220
+        jieyin_Cancel.position.x = cameraNode!.position.x + 480
+        jieyin_Group.position.y = cameraNode!.position.y
+        jieyin_Group.position.x = cameraNode!.position.x
+        jumpButton.position.y = cameraNode!.position.y - 100
+        jumpButton.position.x = cameraNode!.position.x + 560
+        
+        
+        
+        
+        let deltaTime = currentTime - previousTimeInterval
+        previousTimeInterval = currentTime
+        
+        //Player Movement
+        guard let joystickKnob = joystickKnob else { return }
+        let xPosition = Double(joystickKnob.position.x)
+        
+        //跑动还是停止
+        if !isInTheAir {
+            if floor(abs(xPosition)) != 0 {
+                gameStateMachine.enter(RunningState.self)
+            }
+            else {
+                gameStateMachine.enter(IdleState.self)
+            }
+        }
+        let displacement = CGVector(dx: deltaTime * xPosition * playerSpeed, dy: 0)
+        let move = SKAction.move(by: displacement, duration: 0)
+        let faceAction: SKAction!
+        let isMovingRight = xPosition > 0
+        let isMovingLeft = xPosition < 0
+        if isMovingLeft && isFacingRight{
+            isFacingRight = false
+            let turnArround = SKAction.scaleX(to: -abs(player!.xScale), duration: 0)
+            faceAction = .sequence([move, turnArround])
+            
+        } else if isMovingRight && !isFacingRight {
+            isFacingRight = true
+            let turnArround = SKAction.scaleX(to: abs(player!.xScale), duration: 0)
+            faceAction = .sequence([move, turnArround])
+
+        } else {
+            faceAction = move
+        }
+        player?.run(faceAction)
+        
+
+
+        
 
     }
 }
@@ -73,7 +155,12 @@ class GameScene: SKScene {
 //MARK: - LoadUI
 
 extension GameScene {
+    
     func loadUI(){
+        
+        joystick = childNode(withName: "joystick")
+        joystickKnob = joystick!.childNode(withName: "knob")
+        
         ninjitsu_Button = childNode(withName: "ninjitsu_Button")
         jieyin_Group = childNode(withName: "jieyin_Group")
         jieyin_Group.isHidden = true
@@ -91,6 +178,7 @@ extension GameScene {
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
         
+        
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
         
         //结印Label
@@ -99,59 +187,135 @@ extension GameScene {
         //倒计时Label
         timeRemainingLabel = generateText(from: String(timeRemaining), xPosition: 0, yPosition: 350)
         
+        //初始化人物
+        player = SKSpriteNode(imageNamed: "Sasuke/Idle/1")
+        player.name = "Sasuke"
+
         
+        player.physicsBody = SKPhysicsBody(texture: player.texture!, size: player.texture!.size())
+        
+        player.physicsBody?.isDynamic = true
+        player.physicsBody?.affectedByGravity = true
+        player.physicsBody?.allowsRotation = false
+        player.physicsBody?.restitution = 0.2 //default
+        player.physicsBody?.friction = 0.2 //default
+        
+        player.position = CGPoint(x: -300, y: 300)
+        player.zPosition = 0
+        player.xScale = 2
+        player.yScale = 2
+
+        
+        player.physicsBody?.categoryBitMask = CollisionType.player.mask
+        player.physicsBody?.collisionBitMask = CollisionType.ground.mask
+        player.physicsBody?.contactTestBitMask = CollisionType.ground.mask
+        
+        addChild(player)
+        
+        
+        //摄像机
+        cameraNode = (childNode(withName: "cameraNode") as! SKCameraNode)
+        
+        
+        
+        
+        //初始化跳跃按钮
+        jumpButton.position = CGPoint(x: 560, y : -100)
+        jumpButton.xScale = 2
+        jumpButton.yScale = 2
+        jumpButton.zPosition = 1
+        addChild(jumpButton)
         
     }
 }
 
 
+
 //MARK: - Touches
 extension GameScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let ninjitsu_Button = ninjitsu_Button else {return}
-//        guard let jieyin_Group = jieyin_Group else {return}
-//        guard let jieyin_Cancel = jieyin_Cancel else {return}
+        guard let joystick = joystick else { return }
+//        guard let joystickKnob = joystickKnob else { return }
+//        guard let player = player else { return }
         for touch in touches {
             let location = touch.location(in: self)
             
+            //如果点击摇杆
+            isKnobMoving = joystick.contains(location)
             
-            
-            if gameStateMachine.currentState is DefaultState {
-                //默认状态
+            //点击跳跃
+            if jumpButton.contains(location) {
+                gameStateMachine.enter(JumpingState.self)
+                player.run(.applyForce(CGVector(dx: 0.1 * playerSpeed * Double(joystickKnob!.position.x), dy: jumpForceY), duration: 0.1))
+                isInTheAir = true
                 
-                //如果点击忍法
-                if ninjitsu_Button.contains(location){
-                    gameStateMachine.enter(SpellingState.self)
-                    
-                }
-            } else if gameStateMachine.currentState is SpellingState {
-                //结印中
-                
-                //如果点击到印式,存下来
-                for yinshi in twelveYin {
-                    if yinshi.key!.contains(location) {
-                        jieyin += yinshi.value
-                    }
-                }
-                
-                //如果点到了取消按钮,返回默认状态
-                if jieyin_Cancel.contains(location) {
-                    gameStateMachine.enter(DefaultState.self)
-                }
-                
-                //每次点击更新所节的印
-                updateText(text: jieyin, node: &jieyinLabel!)
             }
             
             
+//            //默认状态
+//            if gameStateMachine.currentState is IdleState {
+//                
+//                //如果点击忍法
+//                if ninjitsu_Button.contains(location){
+//                    gameStateMachine.enter(SpellingState.self)
+//
+//                }
+//                //结印中
+//            } else if gameStateMachine.currentState is SpellingState {
+//
+//
+//                //如果点击到印式,存下来
+//                for yinshi in twelveYin {
+//                    if yinshi.key!.contains(location) {
+//                        jieyin += yinshi.value
+//                    }
+//                }
+//
+//                //如果点到了取消按钮,返回默认状态
+//                if jieyin_Cancel.contains(location) {
+//                    gameStateMachine.enter(IdleState.self)
+//                }
+//
+//                //每次点击更新所节的印
+//                updateText(text: jieyin, node: &jieyinLabel!)
+//            }
+            
+            
         }
-//        addfire()
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //解包
+        guard let joystick = joystick else { return }
+        guard let joystickKnob = joystickKnob else { return }
+        //如果没有动摇杆就不用做什么了
+        if !isKnobMoving { return }
+        
+        //计算距离
+        for touch in touches {
+            let position = touch.location(in: joystick)
+            
+            let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
+            let angle = atan2(position.y, position.x)
+            
+            if knobRadius > length {
+                joystickKnob.position = position
+            } else {
+                joystickKnob.position = CGPoint(x: cos(angle) * knobRadius, y: sin(angle) * knobRadius)
+            }
+        }
         
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let joystick = joystick else { return }
+        for touch in touches {
+            let location = touch.location(in: self)
+            if !jumpButton.contains(location) && !ninjitsu_Button.contains(location) {
+                resetKnobPosition()
+            }
+        }
 
+        
+        
     }
     
     
@@ -159,6 +323,17 @@ extension GameScene{
 
 //MARK: - Action
 extension GameScene {
+    
+    //重置摇杆位置
+    func resetKnobPosition() {
+        let initialPoint = CGPoint(x: 0, y: 0)
+        let moveBack = SKAction.move(to: initialPoint, duration: 0.1)
+        moveBack.timingMode = .linear
+        joystickKnob?.run(moveBack)
+        isKnobMoving = false
+    }
+    
+    
     
     //显示结印
     func generateText(from text:String, xPosition: CGFloat, yPosition: CGFloat)  -> SKLabelNode {
@@ -192,53 +367,36 @@ extension GameScene {
         addChild(node)
     }
     
-    func addSasuke()->SKSpriteNode{
-        var textureArray :[SKTexture] = []
-        for i in 1...4{
-            textureArray.append(SKTexture.init(imageNamed: "Idle\(i)"))
-        }
-        
-        let node = SKSpriteNode(texture: textureArray[0])
-        node.size = CGSize(width: 60, height: 60)
-        node.position = CGPoint(x: -300, y: 0)
-        node.xScale = 2
-        node.yScale = 2
-        node.run(.repeatForever(.animate(with: textureArray, timePerFrame: 0.2)))
-        return node
-        
-    }
+
     
     func addperformNinpo(from node: inout SKSpriteNode){
         
         //新动画
         var textureArray :[SKTexture] = []
-        for i in 1...4{
-            textureArray.append(SKTexture.init(imageNamed: "Ninpo\(i)"))
+//        for i in 1...12{
+//            textureArray.append(SKTexture.init(imageNamed: "Sasuke/Huoqiuninpo/\(i)"))
+//        }
+        for i in 1...9{
+            textureArray.append(SKTexture.init(imageNamed: "Sasuke/Huoqiurepeat/\(i)"))
         }
         
-        //node的改动
-        let size = node.size
-        let position = node.position
-//        let zPosition = node.zPosition
-//        let xScale = node.xScale
-//        let yScale = node.yScale
-        node.removeFromParent()
         
-        node = SKSpriteNode(texture: textureArray[0])
-        node.size = size
+        let position = node.position
+        let xScale = node.xScale
+        let yScale = node.yScale
+        
+        node.removeAllChildren()
+        
+        node.texture = textureArray[0]
+//        node.size = size
         node.position = position
 //        newnode.zPosition = zPosition
         node.xScale = xScale
         node.yScale = yScale
         addChild(node)
         
-        node.run(.sequence([
-            .animate(with: textureArray, timePerFrame: 0.15),
-            .run {
-                self.addfire()
-            }
-        ])
-        )
+        node.run(.repeatForever(.animate(with: textureArray, timePerFrame: 0.15)))
+        addfire()
 
     }
     
@@ -252,11 +410,10 @@ extension GameScene {
             fire.physicsBody = physicsBody
             physicsBody.affectedByGravity = false
 //            physicsBody.velocity = CGVector(dx: 100, dy: 200)
-            
             addChild(fire)
             fire.run(.sequence([
                 .moveTo(x: 300, duration: 1),
-                .wait(forDuration: 2),
+                .wait(forDuration: 3),
                 .fadeOut(withDuration: 0.5),
                 .removeFromParent()
             ]))
@@ -321,3 +478,35 @@ extension GameScene {
     
 }
 
+//MARK: - Collisions
+extension GameScene: SKPhysicsContactDelegate  {
+    
+    enum CollisionType: UInt32 {
+        case player = 1
+        case ground = 2
+        
+        var mask: UInt32 {
+            return rawValue
+        }
+    }
+    
+    struct Collision {
+        
+        let masks: (first : UInt32 , second: UInt32)
+        
+        func matches (_ first: CollisionType, _ second: CollisionType) -> Bool {
+            return (first.mask == masks.first && second.mask == masks.second) ||
+            (first.mask == masks.second && second.mask == masks.first)
+        }
+
+    }
+    
+
+    func didBegin(_ contact: SKPhysicsContact) {
+        let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
+        if collision.matches(.player, .ground){
+            gameStateMachine.enter(IdleState.self)
+        }
+    }
+    
+}

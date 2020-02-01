@@ -33,7 +33,7 @@ enum Element: String {
 }
 
 var ninpoDict : [String : (element: Element, ninponame: String)] = [
-    "子丑" : (element: .Huo, ninponame: "豪火球の术"),
+    "巳未申亥午寅" : (element: .Huo, ninponame: "豪火球の术"),
     "寅巳寅巳寅巳" : (element: .Shui, ninponame: "水阵壁")
 ]
 //enum Ninjitsu: String{
