@@ -55,7 +55,7 @@ class GameScene: SKScene {
     
     // Sprite Engine
     var previousTimeInterval : TimeInterval = 0
-    let playerSpeed : Double = 1
+    let playerSpeed : Double = 5
     
     
     //Touches
@@ -240,19 +240,13 @@ extension GameScene{
 //        guard let player = player else { return }
         for touch in touches {
             let location = touch.location(in: self)
-            
             //如果点击摇杆
-            isKnobMoving = joystick.contains(location)
-            
-            
-
-//            if !isKnobMoving{
-//
+//            if !isKnobMoving {
+                isKnobMoving = joystick.contains(location)
 //            }
             
-            
             //点击跳跃
-            if jumpButton.contains(location) && jumpCount > 0 {
+            if jumpButton.contains(location) && jumpCount > 0{
                 jumpButton.isPressed = true
                 gameStateMachine.enter(JumpingState.self)
                 player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
@@ -302,7 +296,6 @@ extension GameScene{
         //计算距离
         for touch in touches {
             let position = touch.location(in: joystick)
-            
             let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
             let angle = atan2(position.y, position.x)
             
@@ -326,7 +319,7 @@ extension GameScene{
             if location.x < preventContactAreaXPostion {
                 resetKnobPosition()
                 isKnobMoving = false
-            }
+            } else { isKnobMoving = true}
             
             if jumpButton.contains(location) {
                 jumpButton.isPressed = false
@@ -526,6 +519,7 @@ extension GameScene: SKPhysicsContactDelegate  {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
             gameStateMachine.enter(IdleState.self)
+            jumpCount = 2
         }
     }
     

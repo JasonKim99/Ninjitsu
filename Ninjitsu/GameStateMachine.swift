@@ -80,6 +80,8 @@ class JumpingState: GameStateMachine {
     }
 
     override func didEnter(from previousState: GKState?) {
+        
+        scene.isInTheAir = true
         scene.player!.run(action, withKey: animateKey)
         //坠落
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
