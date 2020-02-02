@@ -23,7 +23,7 @@ class JumpButton: SKSpriteNode {
     init() {
         let texture = SKTexture(imageNamed: "jumpbutton_normal")
         super.init(texture: texture, color: .clear, size: texture.size())
-        name = "fire"
+        name = "jump"
     }
     
     required init?(coder aDecoder: NSCoder) {

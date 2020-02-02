@@ -45,6 +45,7 @@ class GameScene: SKScene {
     var knobRadius : CGFloat = 70 //摇杆半径
     var jumpCount : Int = 2 //跳跃次数
     var jumpForceY : Double = 250 //跳跃力量
+    var difference : (CGFloat, CGFloat)?
     
     //Bool
     var isSpelling = false //是否在吟唱中
@@ -54,11 +55,11 @@ class GameScene: SKScene {
     
     // Sprite Engine
     var previousTimeInterval : TimeInterval = 0
-    let playerSpeed : Double = 6.0
+    let playerSpeed : Double = 1
     
     
     //Touches
-    var selectedNodes: [UITouch : SKSpriteNode] = [ : ]
+    var selectedNodes: [UITouch : CGPoint] = [ : ]
     
     //GameState
     var gameStateMachine : GKStateMachine!
@@ -243,10 +244,18 @@ extension GameScene{
             //如果点击摇杆
             isKnobMoving = joystick.contains(location)
             
+            
+
+//            if !isKnobMoving{
+//
+//            }
+            
+            
             //点击跳跃
-            if jumpButton.contains(location) {
+            if jumpButton.contains(location) && jumpCount > 0 {
+                jumpButton.isPressed = true
                 gameStateMachine.enter(JumpingState.self)
-                player.run(.applyForce(CGVector(dx: 0.1 * playerSpeed * Double(joystickKnob!.position.x), dy: jumpForceY), duration: 0.1))
+                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
                 isInTheAir = true
                 
             }
@@ -302,16 +311,27 @@ extension GameScene{
             } else {
                 joystickKnob.position = CGPoint(x: cos(angle) * knobRadius, y: sin(angle) * knobRadius)
             }
+
         }
         
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //注意当scene在移动时location在不停变化
 //        guard let joystick = joystick else { return }
         for touch in touches {
             let location = touch.location(in: self)
-            if !jumpButton.contains(location) && !ninjitsu_Button.contains(location) {
+            let preventContactAreaXPostion = ninjitsu_Button.position.x - 200
+            
+            //按钮旁边的位置防止误触
+            if location.x < preventContactAreaXPostion {
                 resetKnobPosition()
+                isKnobMoving = false
             }
+            
+            if jumpButton.contains(location) {
+                jumpButton.isPressed = false
+            }
+
         }
 
         
