@@ -34,29 +34,35 @@ class GameScene: SKScene {
     var timeRemainingLabel : SKLabelNode?
     var joystick: SKNode?
     var joystickKnob: SKNode?
-    let jumpButton = JumpButton()
+    let jumpButton = Buttons(buttonName: "jump")
+    let dashButton = Buttons(buttonName: "dash")
     var player : SKSpriteNode!
     var cameraNode : SKCameraNode?
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
     var jieyin = ""
-    var timeRemaining : TimeInterval = 10 //结印倒计时
+    var spellTimeRemaining : TimeInterval = 10 //结印倒计时
     var knobRadius : CGFloat = 70 //摇杆半径
     var jumpCount : Int = 2 //跳跃次数
     var jumpForceY : Double = 250 //跳跃力量
     var difference : (CGFloat, CGFloat)?
+    var previousTimeInterval : TimeInterval = 0
+    let playerSpeed : Double = 4
+    let dashForceX : Double = 2000
+    let dashForceY : Double = 250
+    let dashTime : TimeInterval = 0.15
+    let dashCoolDown : TimeInterval = 3
+    var dashTimeLeft : TimeInterval = 0
+    var deltaTime : TimeInterval = 0
+    var ySpeed : CGFloat = 0 //垂直速度
     
     //Bool
     var isSpelling = false //是否在吟唱中
     var isKnobMoving = false //是否在控制摇杆
     var isFacingRight = true //是否面向右侧
     var isInTheAir = false //是否在空中
-    
-    // Sprite Engine
-    var previousTimeInterval : TimeInterval = 0
-    let playerSpeed : Double = 5
-    
+    var isDashing = false
     
     //Touches
     var selectedNodes: [UITouch : CGPoint] = [ : ]
@@ -75,7 +81,8 @@ class GameScene: SKScene {
             IdleState(scene: self),
             RunningState( scene: self),
             JumpingState( scene: self),
-            LandingState( scene: self),
+            FallingState( scene: self),
+            DashingState(scene: self),
             SpellingState( scene: self),
             NinjitsuAnimatingState(scene: self)
         ])
@@ -94,6 +101,8 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         
+
+        
         //Camera
         cameraNode?.position.x = player.position.x + 300
         joystick?.position.y = cameraNode!.position.y - 240
@@ -106,19 +115,30 @@ class GameScene: SKScene {
         jieyin_Group.position.x = cameraNode!.position.x
         jumpButton.position.y = cameraNode!.position.y - 100
         jumpButton.position.x = cameraNode!.position.x + 560
+        dashButton.position.y = cameraNode!.position.y - 240
+        dashButton.position.x = cameraNode!.position.x + 340
         
+        //垂直速度
+        ySpeed = player.physicsBody!.velocity.dy
         
+        //判断何时在空中
+        isInTheAir = ySpeed != 0
         
-        
-        let deltaTime = currentTime - previousTimeInterval
+        //单位时间
+        deltaTime = currentTime - previousTimeInterval
         previousTimeInterval = currentTime
         
         //Player Movement
         guard let joystickKnob = joystickKnob else { return }
         let xPosition = Double(joystickKnob.position.x)
         
-        //跑动还是停止
-        if !isInTheAir {
+        
+        if isInTheAir && ySpeed < 0 {
+            gameStateMachine.enter(FallingState.self)
+        }
+        
+        //跑动还是默认状态机
+        if !isInTheAir && !isDashing {
             if floor(abs(xPosition)) != 0 {
                 gameStateMachine.enter(RunningState.self)
             }
@@ -126,6 +146,7 @@ class GameScene: SKScene {
                 gameStateMachine.enter(IdleState.self)
             }
         }
+        
         let displacement = CGVector(dx: deltaTime * xPosition * playerSpeed, dy: 0)
         let move = SKAction.move(by: displacement, duration: 0)
         let faceAction: SKAction!
@@ -146,7 +167,12 @@ class GameScene: SKScene {
         }
         player?.run(faceAction)
         
-
+        
+        //增加冲刺残影
+        if isDashing{
+            addDashShadow()
+        }
+            
 
         
 
@@ -186,7 +212,7 @@ extension GameScene {
         jieyinLabel = generateText(from: jieyin, xPosition: 0, yPosition: 200)
         
         //倒计时Label
-        timeRemainingLabel = generateText(from: String(timeRemaining), xPosition: 0, yPosition: 350)
+        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
         
         //初始化人物
         player = SKSpriteNode(imageNamed: "Sasuke/Idle/1")
@@ -200,6 +226,7 @@ extension GameScene {
         player.physicsBody?.allowsRotation = false
         player.physicsBody?.restitution = 0.2 //default
         player.physicsBody?.friction = 0.2 //default
+
         
         player.position = CGPoint(x: -300, y: 300)
         player.zPosition = 0
@@ -214,18 +241,27 @@ extension GameScene {
         addChild(player)
         
         
+        
         //摄像机
         cameraNode = (childNode(withName: "cameraNode") as! SKCameraNode)
         
         
         
         
-        //初始化跳跃按钮
+        //跳跃按钮
         jumpButton.position = CGPoint(x: 560, y : -100)
         jumpButton.xScale = 2
         jumpButton.yScale = 2
         jumpButton.zPosition = 1
         addChild(jumpButton)
+        
+        
+        //冲刺按钮
+        dashButton.position = CGPoint(x: 340, y: -240)
+        dashButton.xScale = 2
+        dashButton.yScale = 2
+        dashButton.zPosition = 1
+        addChild(dashButton)
         
     }
 }
@@ -239,19 +275,47 @@ extension GameScene{
 //        guard let joystickKnob = joystickKnob else { return }
 //        guard let player = player else { return }
         for touch in touches {
+            
             let location = touch.location(in: self)
             //如果点击摇杆
-//            if !isKnobMoving {
-                isKnobMoving = joystick.contains(location)
-//            }
+            isKnobMoving = joystick.contains(location)
             
             //点击跳跃
             if jumpButton.contains(location) && jumpCount > 0{
                 jumpButton.isPressed = true
+                jumpCount -= 1
                 gameStateMachine.enter(JumpingState.self)
-                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
+//                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
+                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
                 isInTheAir = true
                 
+            }
+            
+            //点击冲刺
+            if dashButton.contains(location) && dashTimeLeft == 0 {
+                isDashing = true
+                dashButton.isPressed = true
+                gameStateMachine.enter(DashingState.self)
+                
+                //在地上以及下降时的冲刺力度
+                let groundDash = SKAction.sequence([
+                    .applyForce(CGVector(dx: isFacingRight ? dashForceX : -dashForceX, dy: 0), duration: 0.075),
+                    .applyForce(CGVector(dx: isFacingRight ? -dashForceX : dashForceX, dy: 0), duration: 0.075) //反作用力
+                ])
+                
+                //在升空中冲刺力度
+                let liftDash = SKAction.sequence([
+                    .applyForce(CGVector(dx: isFacingRight ? dashForceX : -dashForceX, dy: dashForceY), duration: 0.075),
+                    .applyForce(CGVector(dx: isFacingRight ? -dashForceX : dashForceX, dy: 0), duration: 0.075)
+                ])
+                
+                //施力与状态变更
+                player!.run(.sequence([
+                    isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
+                    .run {
+                        self.isDashing = false
+                    }
+                ]))
             }
             
             
@@ -312,8 +376,9 @@ extension GameScene{
         //注意当scene在移动时location在不停变化
 //        guard let joystick = joystick else { return }
         for touch in touches {
+           
             let location = touch.location(in: self)
-            let preventContactAreaXPostion = ninjitsu_Button.position.x - 200
+            let preventContactAreaXPostion = dashButton.position.x - 200
             
             //按钮旁边的位置防止误触
             if location.x < preventContactAreaXPostion {
@@ -323,6 +388,9 @@ extension GameScene{
             
             if jumpButton.contains(location) {
                 jumpButton.isPressed = false
+            }
+            if dashButton.contains(location) {
+                dashButton.isPressed = false
             }
 
         }
@@ -344,6 +412,23 @@ extension GameScene {
         moveBack.timingMode = .linear
         joystickKnob?.run(moveBack)
         isKnobMoving = false
+    }
+    
+    
+    //dash动画
+    func addDashShadow(){
+        let shadownode = SKSpriteNode(texture: self.player.texture)
+        shadownode.position = self.player.position
+        shadownode.xScale = self.player.xScale
+        shadownode.yScale = self.player.yScale
+        shadownode.zPosition = self.player.zPosition
+        addChild(shadownode)
+        shadownode.run(.sequence([
+            .fadeOut(withDuration: 0.1),
+            .run {
+                shadownode.removeFromParent()
+            }
+        ]))
     }
     
     
@@ -518,6 +603,7 @@ extension GameScene: SKPhysicsContactDelegate  {
     func didBegin(_ contact: SKPhysicsContact) {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
+//            player.texture = SKTexture(imageNamed: "Sasuke/onground")
             gameStateMachine.enter(IdleState.self)
             jumpCount = 2
         }

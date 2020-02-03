@@ -25,7 +25,10 @@ class IdleState: GameStateMachine {
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.25))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is JumpingState.Type, is SpellingState.Type, is RunningState.Type: return true
+        case is JumpingState.Type,
+             is SpellingState.Type,
+             is RunningState.Type,
+             is DashingState.Type: return true
         default: return false
         }
     }
@@ -53,7 +56,9 @@ class RunningState: GameStateMachine {
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is LandingState.Type, is RunningState.Type, is NinjitsuAnimatingState.Type: return false
+        case is RunningState.Type,
+             is NinjitsuAnimatingState.Type,
+             is SpellingState.Type: return false
         default: return true
         }
     }
@@ -74,7 +79,10 @@ class JumpingState: GameStateMachine {
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is LandingState.Type, is SpellingState.Type, is JumpingState.Type: return true
+        case is FallingState.Type,
+             is SpellingState.Type,
+             is JumpingState.Type,
+             is DashingState.Type: return true
         default: return false
         }
     }
@@ -83,12 +91,12 @@ class JumpingState: GameStateMachine {
         
         scene.isInTheAir = true
         scene.player!.run(action, withKey: animateKey)
-        //坠落
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
-            if self.scene.player.physicsBody!.velocity.dy < 0 {
-                self.stateMachine!.enter(LandingState.self)
-            }
-        }
+//        //坠落
+//        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
+//            if self.scene.player.physicsBody!.velocity.dy < 0 {
+//                self.stateMachine!.enter(FallingState.self)
+//            }
+//        }
 
         
         
@@ -101,23 +109,50 @@ class JumpingState: GameStateMachine {
 
 //MARK: - 着陆状态
 
-class LandingState : GameStateMachine {
+class FallingState : GameStateMachine {
     var textures : [SKTexture] = (1...2).map({ return "Sasuke/Fall/\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is IdleState.Type, is JumpingState.Type: return true
+        case is IdleState.Type,
+             is JumpingState.Type,
+             is DashingState.Type: return true
         default: return false
         }
     }
     
     override func didEnter(from previousState: GKState?) {
         scene.player!.run(action, withKey: animateKey)
+        
     }
     override func willExit(to nextState: GKState) {
         scene.player.removeAction(forKey: animateKey)
     }
 }
+
+
+//MARK: - 冲刺状态
+
+class DashingState: GameStateMachine {
+    var textures : [SKTexture] = (1...6).map({ return "Sasuke/Dash/dash\($0)"}).map(SKTexture.init)
+    lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
+    override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+        switch stateClass {
+        case is SpellingState.Type, is NinjitsuAnimatingState.Type: return false
+        default: return true
+        }
+    }
+    override func didEnter(from previousState: GKState?) {
+        scene.player!.run(action, withKey: animateKey)
+        
+    }
+    override func willExit(to nextState: GKState) {
+        scene.player.removeAction(forKey: animateKey)
+
+    }
+}
+
+
 
 //MARK: - 结印状态
 
