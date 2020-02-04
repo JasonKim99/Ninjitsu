@@ -86,13 +86,13 @@ class GameScene: SKScene {
             NinjitsuAnimatingState(scene: self)
         ])
         
-//        gameStateMachine.enter(IdleState.self)
         
 //        查询字体名字
 //        for family in UIFont.familyNames.sorted() {
 //            let names = UIFont.fontNames(forFamilyName: family)
 //            print("Family: \(family) Font names: \(names)")
 //        }
+        
         
     }
 
@@ -183,6 +183,12 @@ class GameScene: SKScene {
 extension GameScene {
     
     func loadUI(){
+        
+//        if let tilemap = childNode(withName: "tilemap") as? SKTileMapNode {
+//            generateTileMapPhysicBody(map: tilemap)
+//            tilemap.removeFromParent()
+//        }
+        
         
         joystick = childNode(withName: "joystick")
         joystickKnob = joystick!.childNode(withName: "knob")
@@ -285,7 +291,7 @@ extension GameScene{
                 jumpCount -= 1
                 gameStateMachine.enter(JumpingState.self)
                 player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
-//                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
+                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
                 isInTheAir = true
                 
             }
@@ -401,6 +407,42 @@ extension GameScene{
 
 //MARK: - Action
 extension GameScene {
+    
+    func generateTileMapPhysicBody(map: SKTileMapNode){
+        let tileSize = map.tileSize
+        let halfWidth = CGFloat(map.numberOfColumns) / 2 * tileSize.width
+        let halfHeight = CGFloat(map.numberOfRows) / 2 * tileSize.height
+        
+        for col in 0..<map.numberOfColumns{
+            for row in 0..<map.numberOfRows{
+                if let tileDefinition = map.tileDefinition(atColumn: col, row: row) {
+                    let textures = tileDefinition.textures
+                    let tileTexture = textures.first
+                    let xPosition = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width / 2)
+                    let yPosition = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height / 2)
+                    
+                    //每个模块建立刚体
+                    let tileCell = SKSpriteNode(texture: tileTexture)
+                    tileCell.position = CGPoint(x: xPosition, y: yPosition)
+                    tileCell.zPosition = -1
+                    tileCell.physicsBody = SKPhysicsBody(rectangleOf: tileTexture!.size())
+                    tileCell.setScale(2)
+                    tileCell.physicsBody?.isDynamic = false
+                    tileCell.physicsBody?.affectedByGravity = false
+                    tileCell.physicsBody?.linearDamping = 60
+                    tileCell.physicsBody?.friction = 1
+                    
+                    tileCell.physicsBody?.categoryBitMask = CollisionType.ground.mask
+                    tileCell.physicsBody?.collisionBitMask = CollisionType.player.mask
+                    tileCell.physicsBody?.contactTestBitMask = CollisionType.player.mask
+                    
+                    addChild(tileCell)
+                }
+            }
+        }
+    }
+    
+    
     
     //重置摇杆位置
     func resetKnobPosition() {
