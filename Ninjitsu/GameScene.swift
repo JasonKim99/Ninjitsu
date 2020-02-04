@@ -93,7 +93,6 @@ class GameScene: SKScene {
 //            print("Family: \(family) Font names: \(names)")
 //        }
         
-        
     }
 
     //MARK: - GameLoop
@@ -229,7 +228,7 @@ extension GameScene {
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = true
         player.physicsBody?.allowsRotation = false
-        player.physicsBody?.restitution = 0.2 //default
+        player.physicsBody?.restitution = 0 //default
         player.physicsBody?.friction = 0.2 //default
 
         
