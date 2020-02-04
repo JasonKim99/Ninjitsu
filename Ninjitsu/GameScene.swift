@@ -49,12 +49,11 @@ class GameScene: SKScene {
     var difference : (CGFloat, CGFloat)?
     var previousTimeInterval : TimeInterval = 0
     let playerSpeed : Double = 4
-    let dashForceX : Double = 2000
-    let dashForceY : Double = 250
+    let dashXDistance : Double = 300
+    let dashYDistance : Double = 200
     let dashTime : TimeInterval = 0.15
     let dashCoolDown : TimeInterval = 3
     var dashTimeLeft : TimeInterval = 0
-    var deltaTime : TimeInterval = 0
     var ySpeed : CGFloat = 0 //垂直速度
     
     //Bool
@@ -125,7 +124,7 @@ class GameScene: SKScene {
         isInTheAir = ySpeed != 0
         
         //单位时间
-        deltaTime = currentTime - previousTimeInterval
+        let deltaTime = currentTime - previousTimeInterval
         previousTimeInterval = currentTime
         
         //Player Movement
@@ -285,8 +284,8 @@ extension GameScene{
                 jumpButton.isPressed = true
                 jumpCount -= 1
                 gameStateMachine.enter(JumpingState.self)
-//                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
-                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
+                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
+//                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
                 isInTheAir = true
                 
             }
@@ -298,16 +297,14 @@ extension GameScene{
                 gameStateMachine.enter(DashingState.self)
                 
                 //在地上以及下降时的冲刺力度
-                let groundDash = SKAction.sequence([
-                    .applyForce(CGVector(dx: isFacingRight ? dashForceX : -dashForceX, dy: 0), duration: 0.075),
-                    .applyForce(CGVector(dx: isFacingRight ? -dashForceX : dashForceX, dy: 0), duration: 0.075) //反作用力
-                ])
+                let groundDash = SKAction.move(by: CGVector(dx: (isFacingRight ? dashXDistance : -dashXDistance), dy: 0), duration: 0.15)
                 
                 //在升空中冲刺力度
-                let liftDash = SKAction.sequence([
-                    .applyForce(CGVector(dx: isFacingRight ? dashForceX : -dashForceX, dy: dashForceY), duration: 0.075),
-                    .applyForce(CGVector(dx: isFacingRight ? -dashForceX : dashForceX, dy: 0), duration: 0.075)
-                ])
+//                let liftDash = SKAction.sequence([
+//                    .applyForce(CGVector(dx: isFacingRight ? dashXSpeed : -dashXSpeed, dy: dashYspeed), duration: 0.075),
+//                    .applyForce(CGVector(dx: isFacingRight ? -dashXSpeed : dashXSpeed, dy: 0), duration: 0.075)
+//                ])
+                let liftDash = SKAction.move(by: CGVector(dx: (isFacingRight ? dashXDistance : -dashXDistance), dy: dashYDistance), duration: 0.15)
                 
                 //施力与状态变更
                 player!.run(.sequence([
