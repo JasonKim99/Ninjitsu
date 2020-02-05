@@ -45,7 +45,7 @@ class GameScene: SKScene {
     var spellTimeRemaining : TimeInterval = 10 //结印倒计时
     var knobRadius : CGFloat = 70 //摇杆半径
     var jumpCount : Int = 2 //跳跃次数
-    var jumpForceY : Double = 250 //跳跃力量
+    var jumpForceY : Double = 125 //跳跃力量
     var difference : (CGFloat, CGFloat)?
     var previousTimeInterval : TimeInterval = 0
     let playerSpeed : Double = 4
@@ -361,7 +361,8 @@ extension GameScene{
         
         //计算距离
         for touch in touches {
-            let position = touch.location(in: joystick)
+            let location = touch.location(in: self) // scene的坐标系
+            let position = touch.location(in: joystick) //joystick里面的坐标系
             let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
             let angle = atan2(position.y, position.x)
             
@@ -388,10 +389,10 @@ extension GameScene{
                 isKnobMoving = false
             } else { isKnobMoving = true}
             
-            if jumpButton.contains(location) {
+            if jumpButton.isPressed {
                 jumpButton.isPressed = false
             }
-            if dashButton.contains(location) {
+            if dashButton.isPressed {
                 dashButton.isPressed = false
             }
 
