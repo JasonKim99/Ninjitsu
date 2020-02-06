@@ -54,11 +54,7 @@ class GameScene: SKScene {
     var ySpeed : CGFloat = 0 //垂直速度
     
     //Bool
-    var isSpelling = false //是否在吟唱中
     var isKnobMoving = false //是否在控制摇杆
-    var isFacingRight = true //是否面向右侧
-    var isInTheAir = false //是否在空中
-    var isDashing = false
     
     //Touches
     var selectedNodes: [UITouch : CGPoint] = [ : ]
@@ -101,9 +97,9 @@ class GameScene: SKScene {
         cameraNode?.position.x = player.position.x + 300
         joystick?.position.y = cameraNode!.position.y - size.height/4
         joystick?.position.x = cameraNode!.position.x - size.width/3
-
-//        jieyin_Cancel.position.y = cameraNode!.position.y - size.height/4
-//        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
+        
+        //        jieyin_Cancel.position.y = cameraNode!.position.y - size.height/4
+        //        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
         jieyin_Group.position.y = cameraNode!.position.y
         jieyin_Group.position.x = cameraNode!.position.x
         jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
@@ -120,7 +116,7 @@ class GameScene: SKScene {
         ySpeed = player.physicsBody!.velocity.dy
         
         //判断何时在空中
-        isInTheAir = ySpeed != 0
+        player.isInTheAir = ySpeed != 0
         
         //单位时间
         let deltaTime = currentTime - previousTimeInterval
@@ -131,12 +127,12 @@ class GameScene: SKScene {
         let xPosition = Double(joystickKnob.position.x)
         
         
-        if isInTheAir && ySpeed < 0 {
+        if player.isInTheAir && ySpeed < 0 {
             playerGSMachine.enter(FallingState.self)
         }
         
         //跑动还是默认状态机
-        if !isInTheAir && !isDashing {
+        if !player.isInTheAir && !player.isDashing {
             if floor(abs(xPosition)) != 0 {
                 playerGSMachine.enter(RunningState.self)
             }
@@ -150,13 +146,13 @@ class GameScene: SKScene {
         let faceAction: SKAction!
         let isMovingRight = xPosition > 0
         let isMovingLeft = xPosition < 0
-        if isMovingLeft && isFacingRight{
-            isFacingRight = false
+        if isMovingLeft && player.isFacingRight{
+            player.isFacingRight = false
             let turnArround = SKAction.scaleX(to: -abs(player!.xScale), duration: 0)
             faceAction = .sequence([move, turnArround])
             
-        } else if isMovingRight && !isFacingRight {
-            isFacingRight = true
+        } else if isMovingRight && !player.isFacingRight {
+            player.isFacingRight = true
             let turnArround = SKAction.scaleX(to: abs(player!.xScale), duration: 0)
             faceAction = .sequence([move, turnArround])
             
@@ -167,7 +163,7 @@ class GameScene: SKScene {
         
         
         //增加冲刺残影
-        if isDashing{
+        if player.isDashing{
             addDashShadow()
         }
         
@@ -234,7 +230,7 @@ extension GameScene {
         attackButton.zPosition = 1
         print(jumpButton.position)
         addChild(attackButton)
- 
+        
         jieyin_Group = childNode(withName: "jieyin_Group")
         jieyin_Group.isHidden = true
         jieyin_Cancel = childNode(withName: "jieyin_Cancel")
@@ -293,27 +289,25 @@ extension GameScene{
                 jumpCount -= 1
                 playerGSMachine.enter(JumpingState.self)
                 player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
-                
-                player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
-                isInTheAir = true
+                player.isInTheAir = true
                 
             }
             
             //点击冲刺
             if dashButton.contains(location) && dashTimeLeft == 0 {
-                isDashing = true
+                player.isDashing = true
                 dashButton.isPressed = true
                 playerGSMachine.enter(DashingState.self)
                 
                 //在地上以及下降时的冲刺力度
-                let groundDash = SKAction.move(by: CGVector(dx: (isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: 0.15)
-                let liftDash = SKAction.move(by: CGVector(dx: (isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: 0.15)
+                let groundDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: 0.15)
+                let liftDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: 0.15)
                 
                 //施力与状态变更
                 player!.run(.sequence([
-                    isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
+                    player.isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
                     .run {
-                        self.isDashing = false
+                        self.player.isDashing = false
                     }
                 ]))
             }
@@ -616,7 +610,7 @@ extension GameScene {
 //MARK: - Collisions
 extension GameScene: SKPhysicsContactDelegate  {
     
-
+    
     
     
     func didBegin(_ contact: SKPhysicsContact) {
