@@ -37,7 +37,7 @@ class GameScene: SKScene {
     let dashButton = Buttons(buttonName: "dash" , textureName: "buttonB")
     let ninjitsuButton = Buttons(buttonName: "ninjitsu" , textureName: "buttonY")
     let attackButton = Buttons(buttonName: "attack" , textureName: "buttonX")
-    var player : SKSpriteNode!
+    var player : Avatar!
     var cameraNode : SKCameraNode?
     
     //stats
@@ -49,10 +49,6 @@ class GameScene: SKScene {
     var jumpForceY : Double = 125 //跳跃力量
     var difference : (CGFloat, CGFloat)?
     var previousTimeInterval : TimeInterval = 0
-    let playerSpeed : Double = 4
-    let dashXDistance : Double = 300
-    let dashYDistance : Double = 200
-    let dashTime : TimeInterval = 0.15
     let dashCoolDown : TimeInterval = 3
     var dashTimeLeft : TimeInterval = 0
     var ySpeed : CGFloat = 0 //垂直速度
@@ -68,7 +64,7 @@ class GameScene: SKScene {
     var selectedNodes: [UITouch : CGPoint] = [ : ]
     
     //GameState
-    var gameStateMachine : GKStateMachine!
+    var playerGSMachine : GKStateMachine!
     
     override func didMove(to view: SKView) {
         
@@ -77,14 +73,14 @@ class GameScene: SKScene {
         
         loadUI()
         
-        gameStateMachine = GKStateMachine(states: [
-            IdleState(scene: self),
-            RunningState( scene: self),
-            JumpingState( scene: self),
-            FallingState( scene: self),
-            DashingState(scene: self),
-            SpellingState( scene: self),
-            NinjitsuAnimatingState(scene: self)
+        playerGSMachine = GKStateMachine(states: [
+            IdleState(with: player),
+            RunningState(with: player),
+            JumpingState(with: player),
+            FallingState(with: player),
+            DashingState(with: player),
+            SpellingState(with: player),
+            NinjitsuAnimatingState(with: player)
         ])
         
         //        查询字体名字
@@ -136,20 +132,20 @@ class GameScene: SKScene {
         
         
         if isInTheAir && ySpeed < 0 {
-            gameStateMachine.enter(FallingState.self)
+            playerGSMachine.enter(FallingState.self)
         }
         
         //跑动还是默认状态机
         if !isInTheAir && !isDashing {
             if floor(abs(xPosition)) != 0 {
-                gameStateMachine.enter(RunningState.self)
+                playerGSMachine.enter(RunningState.self)
             }
             else {
-                gameStateMachine.enter(IdleState.self)
+                playerGSMachine.enter(IdleState.self)
             }
         }
         
-        let displacement = CGVector(dx: deltaTime * xPosition * playerSpeed, dy: 0)
+        let displacement = CGVector(dx: deltaTime * xPosition * Double(player.runSpeed), dy: 0)
         let move = SKAction.move(by: displacement, duration: 0)
         let faceAction: SKAction!
         let isMovingRight = xPosition > 0
@@ -265,30 +261,8 @@ extension GameScene {
         timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
         
         //初始化人物
-        player = SKSpriteNode(imageNamed: "Sasuke/Idle/1")
-        player.name = "Sasuke"
-        
-        
-        player.physicsBody = SKPhysicsBody(texture: player.texture!, size: player.texture!.size())
-        
-        player.physicsBody?.isDynamic = true
-        player.physicsBody?.affectedByGravity = true
-        player.physicsBody?.allowsRotation = false
-        player.physicsBody?.restitution = 0 //default
-        player.physicsBody?.friction = 0.2 //default
-        
-        
+        player = Avatar(characterName: "Sasuke", texture: SKTexture(imageNamed: "Sasuke/Idle/1"), scale: 2)
         player.position = CGPoint(x: -300, y: 300)
-        player.zPosition = 0
-        player.xScale = 2
-        player.yScale = 2
-        
-        
-        player.physicsBody?.categoryBitMask = CollisionType.player.mask
-        player.physicsBody?.collisionBitMask = CollisionType.ground.mask
-        player.physicsBody?.contactTestBitMask = CollisionType.ground.mask
-        
-        
         
         addChild(player)
         
@@ -317,7 +291,7 @@ extension GameScene{
             if jumpButton.contains(location) && jumpCount > 0{
                 jumpButton.isPressed = true
                 jumpCount -= 1
-                gameStateMachine.enter(JumpingState.self)
+                playerGSMachine.enter(JumpingState.self)
                 player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
                 
                 player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
@@ -329,11 +303,11 @@ extension GameScene{
             if dashButton.contains(location) && dashTimeLeft == 0 {
                 isDashing = true
                 dashButton.isPressed = true
-                gameStateMachine.enter(DashingState.self)
+                playerGSMachine.enter(DashingState.self)
                 
                 //在地上以及下降时的冲刺力度
-                let groundDash = SKAction.move(by: CGVector(dx: (isFacingRight ? dashXDistance : -dashXDistance), dy: 0), duration: 0.15)
-                let liftDash = SKAction.move(by: CGVector(dx: (isFacingRight ? dashXDistance : -dashXDistance), dy: dashYDistance), duration: 0.15)
+                let groundDash = SKAction.move(by: CGVector(dx: (isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: 0.15)
+                let liftDash = SKAction.move(by: CGVector(dx: (isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: 0.15)
                 
                 //施力与状态变更
                 player!.run(.sequence([
@@ -642,32 +616,14 @@ extension GameScene {
 //MARK: - Collisions
 extension GameScene: SKPhysicsContactDelegate  {
     
-    enum CollisionType: UInt32 {
-        case player = 1
-        case ground = 2
-        
-        var mask: UInt32 {
-            return rawValue
-        }
-    }
-    
-    struct Collision {
-        
-        let masks: (first : UInt32 , second: UInt32)
-        
-        func matches (_ first: CollisionType, _ second: CollisionType) -> Bool {
-            return (first.mask == masks.first && second.mask == masks.second) ||
-                (first.mask == masks.second && second.mask == masks.first)
-        }
-        
-    }
+
     
     
     func didBegin(_ contact: SKPhysicsContact) {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
             //            player.texture = SKTexture(imageNamed: "Sasuke/onground")
-            gameStateMachine.enter(IdleState.self)
+            playerGSMachine.enter(IdleState.self)
             jumpCount = 2
         }
     }

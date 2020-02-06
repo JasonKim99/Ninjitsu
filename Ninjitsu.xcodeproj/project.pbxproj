@@ -11,6 +11,7 @@
 		E00E0F5A23EBA5CB00A16BBA /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00E0F5923EBA5CB00A16BBA /* Avatar.swift */; };
 		E00E0F5D23EBABD900A16BBA /* NormalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00E0F5C23EBABD900A16BBA /* NormalState.swift */; };
 		E017216123E95F4A00321E2D /* tileset.sks in Resources */ = {isa = PBXBuildFile; fileRef = E017216023E95F4A00321E2D /* tileset.sks */; };
+		E033B32F23EC6C0500274DD7 /* Collision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E033B32E23EC6C0500274DD7 /* Collision.swift */; };
 		E078BE7523E6F7F500DA4BA7 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E078BE7423E6F7F500DA4BA7 /* Buttons.swift */; };
 		E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */; };
 		E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */; };
@@ -37,7 +38,7 @@
 		E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4C23E1C00800CD707B /* fire1.sks */; };
 		E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0FAFA8E23D89C4700BB114A /* Testscene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8D23D89C4700BB114A /* Testscene.sks */; };
-		E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */; };
+		E0FAFA9023D93D0900BB114A /* PlayerGSMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		E00E0F5923EBA5CB00A16BBA /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
 		E00E0F5C23EBABD900A16BBA /* NormalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalState.swift; sourceTree = "<group>"; };
 		E017216023E95F4A00321E2D /* tileset.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = tileset.sks; sourceTree = "<group>"; };
+		E033B32E23EC6C0500274DD7 /* Collision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collision.swift; sourceTree = "<group>"; };
 		E078BE7423E6F7F500DA4BA7 /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		E0AF0B8C23D8858B00C8A2A4 /* Ninjitsu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ninjitsu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -92,7 +94,7 @@
 		E0B09F4C23E1C00800CD707B /* fire1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire1.sks; sourceTree = "<group>"; };
 		E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WawaSC-Regular.otf"; sourceTree = "<group>"; };
 		E0FAFA8D23D89C4700BB114A /* Testscene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Testscene.sks; sourceTree = "<group>"; };
-		E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateMachine.swift; sourceTree = "<group>"; };
+		E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerGSMachine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,7 +168,8 @@
 				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
 				E00E0F5923EBA5CB00A16BBA /* Avatar.swift */,
-				E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */,
+				E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */,
+				E033B32E23EC6C0500274DD7 /* Collision.swift */,
 				E00E0F5B23EBA77600A16BBA /* PlayerGameState */,
 				E0B09F3723E176EE00CD707B /* particleeffect */,
 				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
@@ -365,11 +368,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E033B32F23EC6C0500274DD7 /* Collision.swift in Sources */,
 				E078BE7523E6F7F500DA4BA7 /* Buttons.swift in Sources */,
 				E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */,
 				E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */,
 				E0B09F2A23D9C01A00CD707B /* Ninpo.swift in Sources */,
-				E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */,
+				E0FAFA9023D93D0900BB114A /* PlayerGSMachine.swift in Sources */,
 				E00E0F5D23EBABD900A16BBA /* NormalState.swift in Sources */,
 				E0AF0B9823D8858B00C8A2A4 /* GameViewController.swift in Sources */,
 				E00E0F5A23EBA5CB00A16BBA /* Avatar.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  GameStateMachine.swift
+//  PlayerGSMachine.swift
 //  Ninjitsu
 //
 //  Created by Jason Kim on 2020/1/23.
@@ -9,18 +9,32 @@
 import Foundation
 import GameplayKit
 
-class GameStateMachine: GKState {
+class PlayerGSMachine: GKState {
     var animateKey = "change"
-    unowned var scene: GameScene
-    
-    init(scene : GameScene) {
-        self.scene = scene
+    unowned var player: Avatar
+
+    init(with player: Avatar) {
+        self.player = player
         super.init()
+    }
+    
+    func approach(start: CGFloat, end:CGFloat  , shift: CGFloat) -> CGFloat {
+        if (start < end) {
+            return min(start + shift , end)
+        } else {
+            return max(start - shift , end)
+        }
+    }
+    
+    
+    func squashAndStrech(xScale: CGFloat, yScale: CGFloat) {
+        player.xScale += xScale
+        player.yScale += yScale
     }
 }
 
 //MARK: - 默认状态
-class IdleState: GameStateMachine {
+class IdleState: PlayerGSMachine {
     var textures : [SKTexture] = (1...4).map({ return "Sasuke/Idle/\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.25))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -33,25 +47,27 @@ class IdleState: GameStateMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        scene.player!.run(action, withKey: animateKey)
-        scene.jieyin = ""
-        scene.isSpelling = false
-        scene.jieyin_Group.isHidden = true
-        scene.jieyin_Cancel.isHidden = true
-        scene.ninjitsuButton.isHidden = false
-        scene.isInTheAir = false
-        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2)) 
-        
+        player.run(action, withKey: animateKey)
+
+        player.isSpelling = false
+        player.isInTheAir = false
+//        scene.jieyin = ""
+//        scene.jieyin_Group.isHidden = true
+//        scene.jieyin_Cancel.isHidden = true
+//        scene.ninjitsuButton.isHidden = false
+//
+//        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+
     }
     override func willExit(to nextState: GKState) {
-        scene.player.removeAction(forKey: animateKey)
+        player.removeAction(forKey: animateKey)
 
     }
 }
 
 //MARK: - 跑步状态
 
-class RunningState: GameStateMachine {
+class RunningState: PlayerGSMachine {
     let textures : [SKTexture] = (1...6).map({ return "Sasuke/Run/\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -63,18 +79,16 @@ class RunningState: GameStateMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        
-        scene.player!.run(action, withKey: animateKey)
+        player.run(action, withKey: animateKey)
     }
-    
+
     override func willExit(to nextState: GKState) {
-        scene.player.removeAction(forKey: animateKey)
+        player.removeAction(forKey: animateKey)
     }
 }
 
 //MARK: - 跳跃状态
-class JumpingState: GameStateMachine {
-    var timer = Timer()
+class JumpingState: PlayerGSMachine {
     let textures : [SKTexture] = (1...2).map({ return "Sasuke/Jump/\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -88,28 +102,20 @@ class JumpingState: GameStateMachine {
     }
 
     override func didEnter(from previousState: GKState?) {
-        
-        scene.isInTheAir = true
-        scene.player!.run(action, withKey: animateKey)
-//        //坠落
-//        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
-//            if self.scene.player.physicsBody!.velocity.dy < 0 {
-//                self.stateMachine!.enter(FallingState.self)
-//            }
-//        }
-
-        
-        
+        player.isInTheAir = true
+        player.run(action, withKey: animateKey)
+//        squashAndStrech(xScale: -0.5, yScale: 0.5)
+        player.run(.applyImpulse(CGVector(dx: 0, dy: player.maxJumpForce), duration: 0.1))
     }
+
     override func willExit(to nextState: GKState) {
-        scene.player.removeAction(forKey: animateKey)
-        timer.invalidate()
+        player.removeAction(forKey: animateKey)
     }
 }
 
 //MARK: - 着陆状态
 
-class FallingState : GameStateMachine {
+class FallingState : PlayerGSMachine {
     var textures : [SKTexture] = (1...2).map({ return "Sasuke/Fall/\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -120,20 +126,21 @@ class FallingState : GameStateMachine {
         default: return false
         }
     }
-    
+
     override func didEnter(from previousState: GKState?) {
-        scene.player!.run(action, withKey: animateKey)
-        
+        player.run(action, withKey: animateKey)
+
     }
     override func willExit(to nextState: GKState) {
-        scene.player.removeAction(forKey: animateKey)
+        player.removeAction(forKey: animateKey)
+        
     }
 }
 
 
 //MARK: - 冲刺状态
 
-class DashingState: GameStateMachine {
+class DashingState: PlayerGSMachine {
     var textures : [SKTexture] = (1...6).map({ return "Sasuke/Dash/dash\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -143,11 +150,24 @@ class DashingState: GameStateMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        scene.player!.run(action, withKey: animateKey)
+        player.isDashing = true
+        player.run(action, withKey: animateKey)
         
+        //在地上以及下降时的冲刺力度
+        let groundDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: player.dashTime)
+        let liftDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: player.dashTime)
+        
+        //施力与状态变更
+        player.run(.sequence([
+            player.isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
+            .run {
+                self.player.isDashing = false
+            }
+        ]))
+
     }
     override func willExit(to nextState: GKState) {
-        scene.player.removeAction(forKey: animateKey)
+        player.removeAction(forKey: animateKey)
 
     }
 }
@@ -156,7 +176,7 @@ class DashingState: GameStateMachine {
 
 //MARK: - 结印状态
 
-class SpellingState: GameStateMachine {
+class SpellingState: PlayerGSMachine {
     var timer = Timer()
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
@@ -167,60 +187,60 @@ class SpellingState: GameStateMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        var timeRemaining : TimeInterval = 10
-        scene.isSpelling = true
-        scene.ninjitsuButton.isHidden = true
-        scene.jieyin_Group.isHidden = false
-        scene.jieyin_Cancel.isHidden = false
-        scene.jieyin_Group.run(.fadeIn(withDuration: 0.1))
-        scene.jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
-            self.scene.updateText(text: String(format: "%.1f", timeRemaining), node: &self.scene.timeRemainingLabel!)
-            timeRemaining -= 0.1
-            if timeRemaining > 0 {
-                if ninpoDict.keys.contains(self.scene.jieyin){
-                    //结印符合进行施法,进入施法阶段
-                    self.stateMachine!.enter(NinjitsuAnimatingState.self)
-                }
-            } else {self.stateMachine!.enter(IdleState.self)}
-        }
+//        var timeRemaining : TimeInterval = 10
+        player.isSpelling = true
+//        scene.ninjitsuButton.isHidden = true
+//        scene.jieyin_Group.isHidden = false
+//        scene.jieyin_Cancel.isHidden = false
+//        scene.jieyin_Group.run(.fadeIn(withDuration: 0.1))
+//        scene.jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
+//        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
+//            self.scene.updateText(text: String(format: "%.1f", timeRemaining), node: &self.scene.timeRemainingLabel!)
+//            timeRemaining -= 0.1
+//            if timeRemaining > 0 {
+//                if ninpoDict.keys.contains(self.scene.jieyin){
+//                    //结印符合进行施法,进入施法阶段
+//                    self.stateMachine!.enter(NinjitsuAnimatingState.self)
+//                }
+//            } else {self.stateMachine!.enter(IdleState.self)}
+//        }
 
     }
     override func willExit(to nextState: GKState) {
         timer.invalidate()
-        self.scene.timeRemainingLabel!.removeFromParent()
+//        self.scene.timeRemainingLabel!.removeFromParent()
     }
-    
+
 }
 
 
 //MARK: - 忍法动画状态
-class NinjitsuAnimatingState: GameStateMachine {
+class NinjitsuAnimatingState: PlayerGSMachine {
     var timer = Timer()
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         if stateClass is IdleState.Type { return true } else { return false }
     }
     override func didEnter(from previousState: GKState?) {
-        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-        //显示忍法名称
-        let ninpoNameText = ninpoDict[scene.jieyin]!.element.rawValue + " • " + ninpoDict[scene.jieyin]!.ninponame
-        scene.ninpoLabel = scene.generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
-        scene.addChild(scene.ninpoLabel!)
-        scene.ninpoLabel?.run(.scale(by: 1.8, duration: 0.1))
-        scene.jieyin_Group.run(.fadeOut(withDuration: 0.1))
-        scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-        scene.jieyin_Group.isHidden = true
-        scene.jieyin_Cancel.isHidden = true
-        scene.ninjitsuButton.isHidden = true
-        
+//        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+//        //显示忍法名称
+//        let ninpoNameText = ninpoDict[scene.jieyin]!.element.rawValue + " • " + ninpoDict[scene.jieyin]!.ninponame
+//        scene.ninpoLabel = scene.generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
+//        scene.addChild(scene.ninpoLabel!)
+//        scene.ninpoLabel?.run(.scale(by: 1.8, duration: 0.1))
+//        scene.jieyin_Group.run(.fadeOut(withDuration: 0.1))
+//        scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
+//        scene.jieyin_Group.isHidden = true
+//        scene.jieyin_Cancel.isHidden = true
+//        scene.ninjitsuButton.isHidden = true
+
         timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false){_ in
             self.stateMachine!.enter(IdleState.self)
         }
     }
     override func willExit(to nextState: GKState) {
         timer.invalidate()
-        self.scene.jieyin = ""
-        self.scene.ninpoLabel!.removeFromParent()
+//        self.scene.jieyin = ""
+//        self.scene.ninpoLabel!.removeFromParent()
     }
 }
 
