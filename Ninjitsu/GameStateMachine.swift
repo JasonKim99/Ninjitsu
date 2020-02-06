@@ -40,7 +40,7 @@ class IdleState: GameStateMachine {
         scene.jieyin_Cancel.isHidden = true
         scene.ninjitsu_Button.isHidden = false
         scene.isInTheAir = false
-        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
+        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2)) 
         
     }
     override func willExit(to nextState: GKState) {

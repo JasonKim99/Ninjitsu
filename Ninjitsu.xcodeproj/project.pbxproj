@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E00E0F5723EB2A2300A16BBA /* MyActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = E00E0F5623EB2A2300A16BBA /* MyActions.sks */; };
+		E00E0F5A23EBA5CB00A16BBA /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00E0F5923EBA5CB00A16BBA /* Avatar.swift */; };
+		E00E0F5D23EBABD900A16BBA /* NormalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00E0F5C23EBABD900A16BBA /* NormalState.swift */; };
 		E017216123E95F4A00321E2D /* tileset.sks in Resources */ = {isa = PBXBuildFile; fileRef = E017216023E95F4A00321E2D /* tileset.sks */; };
 		E078BE7523E6F7F500DA4BA7 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E078BE7423E6F7F500DA4BA7 /* Buttons.swift */; };
 		E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */; };
@@ -33,7 +36,7 @@
 		E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4A23E1AD5B00CD707B /* fire.sks */; };
 		E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4C23E1C00800CD707B /* fire1.sks */; };
 		E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
-		E0FAFA8E23D89C4700BB114A /* Test.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8D23D89C4700BB114A /* Test.sks */; };
+		E0FAFA8E23D89C4700BB114A /* Testscene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8D23D89C4700BB114A /* Testscene.sks */; };
 		E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +58,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E00E0F5623EB2A2300A16BBA /* MyActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyActions.sks; sourceTree = "<group>"; };
+		E00E0F5923EBA5CB00A16BBA /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
+		E00E0F5C23EBABD900A16BBA /* NormalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalState.swift; sourceTree = "<group>"; };
 		E017216023E95F4A00321E2D /* tileset.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = tileset.sks; sourceTree = "<group>"; };
 		E078BE7423E6F7F500DA4BA7 /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		E0AF0B8C23D8858B00C8A2A4 /* Ninjitsu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ninjitsu.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,7 +91,7 @@
 		E0B09F4A23E1AD5B00CD707B /* fire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire.sks; sourceTree = "<group>"; };
 		E0B09F4C23E1C00800CD707B /* fire1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire1.sks; sourceTree = "<group>"; };
 		E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WawaSC-Regular.otf"; sourceTree = "<group>"; };
-		E0FAFA8D23D89C4700BB114A /* Test.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Test.sks; sourceTree = "<group>"; };
+		E0FAFA8D23D89C4700BB114A /* Testscene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Testscene.sks; sourceTree = "<group>"; };
 		E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateMachine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +120,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E00E0F5823EB2A3700A16BBA /* runTest */ = {
+			isa = PBXGroup;
+			children = (
+				E0FAFA8D23D89C4700BB114A /* Testscene.sks */,
+			);
+			path = runTest;
+			sourceTree = "<group>";
+		};
+		E00E0F5B23EBA77600A16BBA /* PlayerGameState */ = {
+			isa = PBXGroup;
+			children = (
+				E00E0F5C23EBABD900A16BBA /* NormalState.swift */,
+			);
+			path = PlayerGameState;
+			sourceTree = "<group>";
+		};
 		E0AF0B8323D8858B00C8A2A4 = {
 			isa = PBXGroup;
 			children = (
@@ -121,6 +143,7 @@
 				E0AF0BA923D8858D00C8A2A4 /* NinjitsuTests */,
 				E0AF0BB423D8858D00C8A2A4 /* NinjitsuUITests */,
 				E0AF0B8D23D8858B00C8A2A4 /* Products */,
+				E017216023E95F4A00321E2D /* tileset.sks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -138,11 +161,13 @@
 			isa = PBXGroup;
 			children = (
 				E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */,
-				E0FAFA8D23D89C4700BB114A /* Test.sks */,
+				E00E0F5823EB2A3700A16BBA /* runTest */,
+				E00E0F5623EB2A2300A16BBA /* MyActions.sks */,
 				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
+				E00E0F5923EBA5CB00A16BBA /* Avatar.swift */,
 				E0FAFA8F23D93D0900BB114A /* GameStateMachine.swift */,
-				E017216023E95F4A00321E2D /* tileset.sks */,
+				E00E0F5B23EBA77600A16BBA /* PlayerGameState */,
 				E0B09F3723E176EE00CD707B /* particleeffect */,
 				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
 				E0B09F2B23D9C1C100CD707B /* YinShi.swift */,
@@ -306,9 +331,10 @@
 				E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */,
 				E0B09F3D23E1773A00CD707B /* bokeh.sks in Resources */,
 				E0B09F4723E1780E00CD707B /* spark.sks in Resources */,
-				E0FAFA8E23D89C4700BB114A /* Test.sks in Resources */,
+				E0FAFA8E23D89C4700BB114A /* Testscene.sks in Resources */,
 				E0B09F3F23E1777200CD707B /* firefly.sks in Resources */,
 				E0AF0B9D23D8858D00C8A2A4 /* Assets.xcassets in Resources */,
+				E00E0F5723EB2A2300A16BBA /* MyActions.sks in Resources */,
 				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,
 				E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */,
 				E0AF0BA023D8858D00C8A2A4 /* LaunchScreen.storyboard in Resources */,
@@ -344,7 +370,9 @@
 				E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */,
 				E0B09F2A23D9C01A00CD707B /* Ninpo.swift in Sources */,
 				E0FAFA9023D93D0900BB114A /* GameStateMachine.swift in Sources */,
+				E00E0F5D23EBABD900A16BBA /* NormalState.swift in Sources */,
 				E0AF0B9823D8858B00C8A2A4 /* GameViewController.swift in Sources */,
+				E00E0F5A23EBA5CB00A16BBA /* Avatar.swift in Sources */,
 				E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

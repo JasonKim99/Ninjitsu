@@ -9,13 +9,13 @@
 import Foundation
 import SpriteKit
 
-class Buttons: SKSpriteNode {
+class Buttons: SKSpriteNode{
     var isPressed = false {
         didSet{
             if isPressed {
-                texture = SKTexture(imageNamed: "button_pressed")
+                alpha = 0.9
             } else {
-                texture = SKTexture(imageNamed: "button_normal")
+                alpha = 0.2
             }
         }
     }
@@ -23,7 +23,8 @@ class Buttons: SKSpriteNode {
     init(buttonName: String) {
         let texture = SKTexture(imageNamed: "button_normal")
         super.init(texture: texture, color: .clear, size: texture.size())
-        name = buttonName
+        self.name = buttonName
+        self.alpha = 0.2
     }
     
     required init?(coder aDecoder: NSCoder) {

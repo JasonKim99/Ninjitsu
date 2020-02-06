@@ -242,6 +242,8 @@ extension GameScene {
         player.physicsBody?.collisionBitMask = CollisionType.ground.mask
         player.physicsBody?.contactTestBitMask = CollisionType.ground.mask
         
+
+        
         addChild(player)
         
         
@@ -290,6 +292,7 @@ extension GameScene{
                 jumpCount -= 1
                 gameStateMachine.enter(JumpingState.self)
                 player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
+                
                 player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
                 isInTheAir = true
                 
@@ -361,7 +364,7 @@ extension GameScene{
         
         //计算距离
         for touch in touches {
-            let location = touch.location(in: self) // scene的坐标系
+//            let location = touch.location(in: self) // scene的坐标系
             let position = touch.location(in: joystick) //joystick里面的坐标系
             let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
             let angle = atan2(position.y, position.x)
