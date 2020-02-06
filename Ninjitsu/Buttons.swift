@@ -20,8 +20,8 @@ class Buttons: SKSpriteNode{
         }
     }
     
-    init(buttonName: String) {
-        let texture = SKTexture(imageNamed: "button_normal")
+    init(buttonName: String , textureName : String) {
+        let texture = SKTexture(imageNamed: textureName)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = buttonName
         self.alpha = 0.2

@@ -38,7 +38,7 @@ class IdleState: GameStateMachine {
         scene.isSpelling = false
         scene.jieyin_Group.isHidden = true
         scene.jieyin_Cancel.isHidden = true
-        scene.ninjitsu_Button.isHidden = false
+        scene.ninjitsuButton.isHidden = false
         scene.isInTheAir = false
         scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2)) 
         
@@ -169,7 +169,7 @@ class SpellingState: GameStateMachine {
     override func didEnter(from previousState: GKState?) {
         var timeRemaining : TimeInterval = 10
         scene.isSpelling = true
-        scene.ninjitsu_Button.isHidden = true
+        scene.ninjitsuButton.isHidden = true
         scene.jieyin_Group.isHidden = false
         scene.jieyin_Cancel.isHidden = false
         scene.jieyin_Group.run(.fadeIn(withDuration: 0.1))
@@ -211,7 +211,7 @@ class NinjitsuAnimatingState: GameStateMachine {
         scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
         scene.jieyin_Group.isHidden = true
         scene.jieyin_Cancel.isHidden = true
-        scene.ninjitsu_Button.isHidden = true
+        scene.ninjitsuButton.isHidden = true
         
         timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false){_ in
             self.stateMachine!.enter(IdleState.self)
