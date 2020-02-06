@@ -34,13 +34,13 @@ class IdleState: GameStateMachine {
     }
     override func didEnter(from previousState: GKState?) {
         scene.player!.run(action, withKey: animateKey)
-        scene.jieyin = ""
-        scene.isSpelling = false
-        scene.jieyin_Group.isHidden = true
-        scene.jieyin_Cancel.isHidden = true
-        scene.ninjitsuButton.isHidden = false
-        scene.isInTheAir = false
-        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2)) 
+//        scene.jieyin = ""
+//        scene.isSpelling = false
+//        scene.jieyin_Group.isHidden = true
+//        scene.jieyin_Cancel.isHidden = true
+//        scene.ninjitsuButton.isHidden = false
+//        scene.isInTheAir = false
+//        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
         
     }
     override func willExit(to nextState: GKState) {
