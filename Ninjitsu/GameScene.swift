@@ -318,6 +318,8 @@ extension GameScene{
                 jumpButton.isPressed = true
                 jumpCount -= 1
                 gameStateMachine.enter(JumpingState.self)
+                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
+                
                 player.run(.applyImpulse(CGVector(dx: 0, dy: jumpForceY/10), duration: 0.1))
                 isInTheAir = true
                 
