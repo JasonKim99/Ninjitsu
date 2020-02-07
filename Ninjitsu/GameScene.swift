@@ -137,22 +137,6 @@ class GameScene: SKScene {
 
         player.isMovingRight = xPosition > 0
         player.isMovingLeft = xPosition < 0
-//                let faceAction: SKAction!
-//        if player.isMovingLeft && player.isFacingRight{
-//            player.isFacingRight = false
-//            let turnArround = SKAction.scaleX(to: -abs(player!.xScale), duration: 0)
-//            faceAction = .sequence([move, turnArround])
-//
-//        } else if player.isMovingRight && !player.isFacingRight {
-//            player.isFacingRight = true
-//            let turnArround = SKAction.scaleX(to: abs(player!.xScale), duration: 0)
-//            faceAction = .sequence([move, turnArround])
-//
-//        } else {
-//            faceAction = move
-//        }
-//        player?.run(faceAction)
-        
         
         //增加冲刺残影
         if player.isDashing{
