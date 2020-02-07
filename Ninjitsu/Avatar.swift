@@ -11,22 +11,6 @@ import GameplayKit
 
 class Avatar : SKSpriteNode {
     
-    var isMovingRight = true
-    var isMovingLeft = false
-    var isFacingRight = true
-    var isInTheAir = false
-    var isSpelling = false
-    var isDashing = false
-    
-    var hSpeed : CGFloat = 0.0  //水平速度
-    var vSpeed : CGFloat { //垂直速度
-        if let dy = physicsBody?.velocity.dy {
-            return dy
-        } else {
-            return 0.0
-        }
-    }
-
     var runSpeed : CGFloat = 8.0 //跑步速度
     
     var maxJumpForce : CGFloat = 30.0 //最大跳跃力
@@ -41,7 +25,7 @@ class Avatar : SKSpriteNode {
     //默认scale
     var dxScale : CGFloat = 1.0
     var dyScale : CGFloat = 1.0
-
+    
     
     //dash的距离
     var dashX : CGFloat = 200.0
@@ -49,6 +33,65 @@ class Avatar : SKSpriteNode {
     
     //dashTime
     var dashTime : TimeInterval = 0.15
+    
+    var hSpeed : CGFloat = 0.0  //水平速度
+    var vSpeed : CGFloat { //垂直速度
+        get {
+            if let dy = physicsBody?.velocity.dy {
+                return dy
+            } else {
+                return 0.0
+            }
+        }
+
+    }
+    
+    var isInTheAir : Bool {
+        get{
+            if vSpeed != 0 {
+                return true
+            } else {
+                return false
+            }
+        }
+        set {}
+
+    }
+    
+    var isMovingRight = false {
+        didSet {
+            if isMovingRight {
+                isFacingRight = true
+            }
+        }
+    }
+    var isMovingLeft = false {
+        didSet {
+            if isMovingLeft {
+                isFacingRight = false
+            }
+        }
+    }
+    var isFacingRight  = true {
+        didSet{
+            if isFacingRight {
+                xScale = abs(xScale)
+                dxScale = abs(dxScale)
+            } else {
+                xScale = -abs(xScale)
+                dxScale = -abs(dxScale)
+            }
+        }
+    }
+
+
+    
+    var isSpelling = false
+    var isDashing = false
+    
+
+
+
     
     
     

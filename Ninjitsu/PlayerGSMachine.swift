@@ -126,6 +126,7 @@ class FallingState : PlayerGSMachine {
         switch stateClass {
         case is IdleState.Type,
              is JumpingState.Type,
+             is RunningState.Type,
              is DashingState.Type: return true
         default: return false
         }
