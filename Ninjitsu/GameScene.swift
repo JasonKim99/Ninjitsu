@@ -45,13 +45,10 @@ class GameScene: SKScene {
     var jieyin = ""
     var spellTimeRemaining : TimeInterval = 10 //结印倒计时
     var knobRadius : CGFloat = 100 //摇杆半径
-    var jumpCount : Int = 2 //跳跃次数
-    var jumpForceY : Double = 125 //跳跃力量
     var difference : (CGFloat, CGFloat)?
     var previousTimeInterval : TimeInterval = 0
     let dashCoolDown : TimeInterval = 3
     var dashTimeLeft : TimeInterval = 0
-    var ySpeed : CGFloat = 0 //垂直速度
     
     //Bool
     var isKnobMoving = false //是否在控制摇杆
@@ -113,10 +110,10 @@ class GameScene: SKScene {
         
         
         //垂直速度
-        ySpeed = player.physicsBody!.velocity.dy
+//        player.vSpeed = player.physicsBody!.velocity.dy
         
         //判断何时在空中
-        player.isInTheAir = ySpeed != 0
+        player.isInTheAir = player.vSpeed != 0
         
         //单位时间
         let deltaTime = currentTime - previousTimeInterval
@@ -127,7 +124,7 @@ class GameScene: SKScene {
         let xPosition = Double(joystickKnob.position.x)
         
         
-        if player.isInTheAir && ySpeed < 0 {
+        if player.isInTheAir && player.vSpeed < 0 {
             playerGSMachine.enter(FallingState.self)
         }
         
@@ -188,8 +185,6 @@ extension GameScene {
         cameraNode = (childNode(withName: "cameraNode") as! SKCameraNode)
         
         
-        
-        
         joystick = SKSpriteNode(imageNamed: "joystick")
         joystickKnob = SKSpriteNode(imageNamed: "knob")
         joystick?.setScale(0.8)
@@ -199,7 +194,7 @@ extension GameScene {
         
         joystick?.position = CGPoint(x: -size.width/3 , y: -size.height/4)
         addChild(joystick!)
-
+        
         
         
         //跳跃按钮
@@ -280,32 +275,18 @@ extension GameScene{
             isKnobMoving = joystick.contains(location)
             
             //点击跳跃
-            if jumpButton.contains(location) && jumpCount > 0{
+            if jumpButton.contains(location) && player.jumpCount > 0{
                 jumpButton.isPressed = true
-                jumpCount -= 1
+                player.jumpCount -= 1
                 playerGSMachine.enter(JumpingState.self)
-                player.run(.applyForce(CGVector(dx: 0, dy: jumpForceY), duration: 0.1))
-                player.isInTheAir = true
                 
             }
             
             //点击冲刺
             if dashButton.contains(location) && dashTimeLeft == 0 {
-                player.isDashing = true
                 dashButton.isPressed = true
                 playerGSMachine.enter(DashingState.self)
                 
-                //在地上以及下降时的冲刺力度
-                let groundDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: 0.15)
-                let liftDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: 0.15)
-                
-                //施力与状态变更
-                player!.run(.sequence([
-                    player.isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
-                    .run {
-                        self.player.isDashing = false
-                    }
-                ]))
             }
             
             
@@ -614,7 +595,7 @@ extension GameScene: SKPhysicsContactDelegate  {
         if collision.matches(.player, .ground){
             //            player.texture = SKTexture(imageNamed: "Sasuke/onground")
             playerGSMachine.enter(IdleState.self)
-            jumpCount = 2
+            player.jumpCount = 2
         }
     }
     

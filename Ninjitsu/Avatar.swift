@@ -19,10 +19,18 @@ class Avatar : SKSpriteNode {
     var isDashing = false
     
     var hSpeed : CGFloat = 0.0  //水平速度
-    var vSpeed : CGFloat = 0.0 //垂直速度
+    var vSpeed : CGFloat { //垂直速度
+        if let dy = physicsBody?.velocity.dy {
+            return dy
+        } else {
+            return 0.0
+        }
+    }
+
     var runSpeed : CGFloat = 8.0 //跑步速度
     
-    var maxJumpForce : CGFloat = 30.0 //最大跳跃
+    var maxJumpForce : CGFloat = 30.0 //最大跳跃力
+    var jumpCount : Int  = 2
     
     var airAccelerate : CGFloat = 0.8  //空中加速度
     var airDecelerate : CGFloat = 0.8  //减
@@ -31,8 +39,9 @@ class Avatar : SKSpriteNode {
     
     
     //默认scale
-    var dxScale : CGFloat = 0.0
-    var dyScale : CGFloat = 0.0
+    var dxScale : CGFloat = 1.0
+    var dyScale : CGFloat = 1.0
+
     
     //dash的距离
     var dashX : CGFloat = 200.0
