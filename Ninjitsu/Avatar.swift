@@ -11,6 +11,8 @@ import GameplayKit
 
 class Avatar : SKSpriteNode {
     
+    var stateMachine : GKStateMachine?
+    
     var runSpeed : CGFloat = 8.0 //跑步速度
     
     var maxJumpForce : CGFloat = 30.0 //最大跳跃力
@@ -102,6 +104,7 @@ class Avatar : SKSpriteNode {
         dyScale = scale
         setPhysicBody(texture: texture)
         setScale(scale)
+        setupStateMachine()
     }
     
     func setPhysicBody(texture: SKTexture){
@@ -120,6 +123,20 @@ class Avatar : SKSpriteNode {
         
         
     }
+    
+    func setupStateMachine() {
+        stateMachine = GKStateMachine(states: [
+            IdleState(with: self),
+            RunningState(with: self),
+            JumpingState(with: self),
+            FallingState(with: self),
+            DashingState(with: self),
+            SpellingState(with: self),
+            NinjitsuAnimatingState(with: self)
+        ])
+        stateMachine?.enter(IdleState.self)
+    }
+    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

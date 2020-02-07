@@ -61,7 +61,7 @@ class GameScene: SKScene {
     var selectedNodes: [UITouch : CGPoint] = [ : ]
     
     //GameState
-    var playerGSMachine : GKStateMachine!
+//    var player.stateMachine! : GKStateMachine!
     
     override func didMove(to view: SKView) {
         
@@ -78,15 +78,15 @@ class GameScene: SKScene {
 //            }
 //        }
         
-        playerGSMachine = GKStateMachine(states: [
-            IdleState(with: player),
-            RunningState(with: player),
-            JumpingState(with: player),
-            FallingState(with: player),
-            DashingState(with: player),
-            SpellingState(with: player),
-            NinjitsuAnimatingState(with: player)
-        ])
+//        player.stateMachine! = GKStateMachine(states: [
+//            IdleState(with: player),
+//            RunningState(with: player),
+//            JumpingState(with: player),
+//            FallingState(with: player),
+//            DashingState(with: player),
+//            SpellingState(with: player),
+//            NinjitsuAnimatingState(with: player)
+//        ])
         
         //        查询字体名字
         //        for family in UIFont.familyNames.sorted() {
@@ -111,14 +111,14 @@ class GameScene: SKScene {
         //        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
         jieyin_Group.position.y = cameraNode!.position.y
         jieyin_Group.position.x = cameraNode!.position.x
-        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 90
+        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
         jumpButton.position.x = cameraNode!.position.x + size.width/3
         dashButton.position.y = cameraNode!.position.y - size.height/4
-        dashButton.position.x = cameraNode!.position.x + size.width/3 + 90
-        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 90
+        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
+        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
         ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
         attackButton.position.y = cameraNode!.position.y - size.height/4
-        attackButton.position.x = cameraNode!.position.x + size.width/3 - 90
+        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
         
         //单位时间
         let deltaTime = currentTime - previousTimeInterval
@@ -130,16 +130,16 @@ class GameScene: SKScene {
         
         
         if player.vSpeed < 0 {
-            playerGSMachine.enter(FallingState.self)
+            player.stateMachine!.enter(FallingState.self)
         }
         
         //跑动还是默认状态机
         if !player.isInTheAir && !player.isDashing {
             if floor(abs(xPosition)) != 0 {
-                playerGSMachine.enter(RunningState.self)
+                player.stateMachine!.enter(RunningState.self)
             }
             else {
-                playerGSMachine.enter(IdleState.self)
+                player.stateMachine!.enter(IdleState.self)
             }
         }
         
@@ -189,26 +189,26 @@ extension GameScene {
         
         
         //跳跃按钮
-        jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 90)
+        jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 80)
         jumpButton.setScale(2.5)
         jumpButton.zPosition = 10
         addChild(jumpButton)
         
         
         //冲刺按钮
-        dashButton.position = CGPoint(x: size.width / 3 + 90 , y : -size.height/4 )
+        dashButton.position = CGPoint(x: size.width / 3 + 80 , y : -size.height/4 )
         dashButton.setScale(2.5)
         dashButton.zPosition = 1
         addChild(dashButton)
         
         //忍法按钮
-        ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 90)
+        ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 80)
         ninjitsuButton.setScale(2.5)
         ninjitsuButton.zPosition = 1
         addChild(ninjitsuButton)
         
         //攻击按钮
-        attackButton.position = CGPoint(x: size.width / 3 - 90 , y : -size.height/4)
+        attackButton.position = CGPoint(x: size.width / 3 - 80 , y : -size.height/4)
         attackButton.setScale(2.5)
         attackButton.zPosition = 1
         addChild(attackButton)
@@ -270,12 +270,12 @@ extension GameScene{
             if jumpButton.contains(location) && player.jumpCount > 0{
                 jumpButton.isPressed = true
                 player.jumpCount -= 1
-                playerGSMachine.enter(JumpingState.self)
+                player.stateMachine!.enter(JumpingState.self)
                 
             } else if dashButton.contains(location) && dashTimeLeft == 0{
                 //点击冲刺
                 dashButton.isPressed = true
-                playerGSMachine.enter(DashingState.self)
+                player.stateMachine!.enter(DashingState.self)
             }
 
             
@@ -367,39 +367,41 @@ extension GameScene{
 //MARK: - Action
 extension GameScene {
     
-    func generateTileMapPhysicBody(map: SKTileMapNode){
-        let tileSize = map.tileSize
-        let halfWidth = CGFloat(map.numberOfColumns) / 2 * tileSize.width
-        let halfHeight = CGFloat(map.numberOfRows) / 2 * tileSize.height
-        
-        for col in 0..<map.numberOfColumns{
-            for row in 0..<map.numberOfRows{
-                if let tileDefinition = map.tileDefinition(atColumn: col, row: row) {
-                    let textures = tileDefinition.textures
-                    let tileTexture = textures.first
-                    let xPosition = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width / 2)
-                    let yPosition = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height / 2)
-                    
-                    //每个模块建立刚体
-                    let tileCell = SKSpriteNode(texture: tileTexture)
-                    tileCell.position = CGPoint(x: xPosition, y: yPosition)
-                    tileCell.zPosition = -1
-                    tileCell.physicsBody = SKPhysicsBody(rectangleOf: tileTexture!.size())
-                    tileCell.setScale(2)
-                    tileCell.physicsBody?.isDynamic = false
-                    tileCell.physicsBody?.affectedByGravity = false
-                    tileCell.physicsBody?.linearDamping = 60
-                    tileCell.physicsBody?.friction = 1
-                    
-                    tileCell.physicsBody?.categoryBitMask = CollisionType.ground.mask
-                    tileCell.physicsBody?.collisionBitMask = CollisionType.player.mask
-                    tileCell.physicsBody?.contactTestBitMask = CollisionType.player.mask
-                    
-                    addChild(tileCell)
-                }
-            }
-        }
-    }
+    
+    //遍历tilemap
+//    func generateTileMapPhysicBody(map: SKTileMapNode){
+//        let tileSize = map.tileSize
+//        let halfWidth = CGFloat(map.numberOfColumns) / 2 * tileSize.width
+//        let halfHeight = CGFloat(map.numberOfRows) / 2 * tileSize.height
+//
+//        for col in 0..<map.numberOfColumns{
+//            for row in 0..<map.numberOfRows{
+//                if let tileDefinition = map.tileDefinition(atColumn: col, row: row) {
+//                    let textures = tileDefinition.textures
+//                    let tileTexture = textures.first
+//                    let xPosition = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width / 2)
+//                    let yPosition = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height / 2)
+//
+//                    //每个模块建立刚体
+//                    let tileCell = SKSpriteNode(texture: tileTexture)
+//                    tileCell.position = CGPoint(x: xPosition, y: yPosition)
+//                    tileCell.zPosition = -1
+//                    tileCell.physicsBody = SKPhysicsBody(rectangleOf: tileTexture!.size())
+//                    tileCell.setScale(2)
+//                    tileCell.physicsBody?.isDynamic = false
+//                    tileCell.physicsBody?.affectedByGravity = false
+//                    tileCell.physicsBody?.linearDamping = 60
+//                    tileCell.physicsBody?.friction = 1
+//
+//                    tileCell.physicsBody?.categoryBitMask = CollisionType.ground.mask
+//                    tileCell.physicsBody?.collisionBitMask = CollisionType.player.mask
+//                    tileCell.physicsBody?.contactTestBitMask = CollisionType.player.mask
+//
+//                    addChild(tileCell)
+//                }
+//            }
+//        }
+//    }
     
     
     
@@ -416,6 +418,7 @@ extension GameScene {
     //dash动画
     func addDashShadow(){
         let shadownode = SKSpriteNode(texture: self.player.texture)
+        print(shadownode.texture)
         shadownode.position = self.player.position
         shadownode.xScale = self.player.xScale
         shadownode.yScale = self.player.yScale
@@ -530,13 +533,13 @@ extension GameScene {
     //        }
     //
     //
-    //
+    //剪切图片
     //        var texture = Array<SKTexture>()
     //        var texture1 = Array<SKTexture>()
     //        let gaara = UIImage(named:"Gaara")!
     //
     //        let gaaracropped1 = gaara.cgImage?.cropping(to: CGRect(x: 439, y: 512-213, width: 36, height: 76))
-    //        let gaaracropped2 = gaara.cgImage?.cropping(to: CGRect(x: 390, y: 512-(275+76), width: 36, height: 76))
+    //        let gaaracropped2 = gaara.cgImage?.cropping(to: CGRect(x: 380, y: 512-(275+76), width: 36, height: 76))
     //        let gaaracropped3 = gaara.cgImage?.cropping(to: CGRect(x: 352, y: 512-(275+76), width: 36, height: 76))
     //        let gaaracropped4 = gaara.cgImage?.cropping(to: CGRect(x: 496, y: 512-(2+76), width: 36, height: 76))
     //        let gaaracropped5 = gaara.cgImage?.cropping(to: CGRect(x: 458, y: 512-(2+76), width: 36, height: 76))
@@ -581,7 +584,7 @@ extension GameScene: SKPhysicsContactDelegate  {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
             //            player.texture = SKTexture(imageNamed: "Sasuke/onground")
-            playerGSMachine.enter(IdleState.self)
+            player.stateMachine!.enter(IdleState.self)
             player.jumpCount = 2
         }
     }
