@@ -30,11 +30,12 @@ class Avatar : SKSpriteNode {
     
     
     //dash的距离
-    var dashX : CGFloat = 200.0
-    var dashY : CGFloat = 120.0
+    var dashX : CGFloat = 300.0
+    var dashY : CGFloat = 150.0
     
     //dashTime
     var dashTime : TimeInterval = 0.15
+    var shadowFadeOut : TimeInterval = 0.15
     
     var hSpeed : CGFloat = 0.0  //水平速度
     var vSpeed : CGFloat { //垂直速度
@@ -91,9 +92,6 @@ class Avatar : SKSpriteNode {
     var isSpelling = false
     var isDashing = false
     
-
-
-
     
     
     

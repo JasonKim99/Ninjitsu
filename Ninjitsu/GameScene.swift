@@ -42,6 +42,8 @@ class GameScene: SKScene {
     let attackButton = Buttons(buttonName: "attack" , textureName: "buttonX")
     var player : Avatar!
     var cameraNode : SKCameraNode?
+    var shadowPool : [SKTexture] = []
+    var shadowTextureIndex : Int = 0
 //    var controllers : PlayerControllers?
     
     //stats
@@ -132,6 +134,8 @@ class GameScene: SKScene {
         if player.vSpeed < 0 {
             player.stateMachine!.enter(FallingState.self)
         }
+        
+        
         
         //跑动还是默认状态机
         if !player.isInTheAir && !player.isDashing {
@@ -244,10 +248,12 @@ extension GameScene {
         
         addChild(player)
         
+        for i in 1...6 {
+            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
+            shadowPool.append(shadow)
+        }
         
         
-//        controllers = PlayerControllers(frame: self.frame)
-//        addChild(controllers!)
         
     }
 }
@@ -272,7 +278,8 @@ extension GameScene{
                 player.jumpCount -= 1
                 player.stateMachine!.enter(JumpingState.self)
                 
-            } else if dashButton.contains(location) && dashTimeLeft == 0{
+            }
+            if dashButton.contains(location) && dashTimeLeft == 0{
                 //点击冲刺
                 dashButton.isPressed = true
                 player.stateMachine!.enter(DashingState.self)
@@ -417,19 +424,24 @@ extension GameScene {
     
     //dash动画
     func addDashShadow(){
-        let shadownode = SKSpriteNode(texture: self.player.texture)
-        print(shadownode.texture)
+        let shadownode = SKSpriteNode(texture: shadowPool[shadowTextureIndex])
         shadownode.position = self.player.position
         shadownode.xScale = self.player.xScale
         shadownode.yScale = self.player.yScale
         shadownode.zPosition = self.player.zPosition
         addChild(shadownode)
         shadownode.run(.sequence([
-            .fadeOut(withDuration: 0.2),
+            .fadeOut(withDuration: player.shadowFadeOut),
             .run {
                 shadownode.removeFromParent()
             }
         ]))
+        if shadowTextureIndex < 5 {
+            shadowTextureIndex += 1
+        } else {
+            shadowTextureIndex = 0
+        }
+
     }
     
     

@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "buttonY.png",
+      "filename" : "buttonY000.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "buttonY-1.png",
+      "filename" : "buttonY000-1.png",
       "scale" : "2x"
     },
     {
