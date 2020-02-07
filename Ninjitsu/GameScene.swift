@@ -199,14 +199,13 @@ extension GameScene {
         
         joystick?.position = CGPoint(x: -size.width/3 , y: -size.height/4)
         addChild(joystick!)
-        print(joystick!.position)
+
         
         
         //跳跃按钮
         jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 80)
         jumpButton.setScale(2.5)
         jumpButton.zPosition = 10
-        print(jumpButton.position)
         addChild(jumpButton)
         
         
@@ -214,21 +213,18 @@ extension GameScene {
         dashButton.position = CGPoint(x: size.width / 3 + 80 , y : -size.height/4 )
         dashButton.setScale(2.5)
         dashButton.zPosition = 1
-        print(jumpButton.position)
         addChild(dashButton)
         
         //忍法按钮
         ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 80)
         ninjitsuButton.setScale(2.5)
         ninjitsuButton.zPosition = 1
-        print(jumpButton.position)
         addChild(ninjitsuButton)
         
         //攻击按钮
         attackButton.position = CGPoint(x: size.width / 3 - 80 , y : -size.height/4)
         attackButton.setScale(2.5)
         attackButton.zPosition = 1
-        print(jumpButton.position)
         addChild(attackButton)
         
         jieyin_Group = childNode(withName: "jieyin_Group")
