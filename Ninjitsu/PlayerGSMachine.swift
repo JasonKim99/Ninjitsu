@@ -40,11 +40,8 @@ class IdleState: PlayerGSMachine {
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.25))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is JumpingState.Type,
-             is SpellingState.Type,
-             is RunningState.Type,
-             is DashingState.Type: return true
-        default: return false
+        case is NinjitsuAnimatingState.Type: return false
+        default: return true
         }
     }
     override func didEnter(from previousState: GKState?) {

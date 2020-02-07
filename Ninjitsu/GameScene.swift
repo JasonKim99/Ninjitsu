@@ -13,6 +13,9 @@ import UIKit
 
 class GameScene: SKScene {
     
+    var entities = [GKEntity]()
+    var graphs = [String : GKGraph]()
+    
     //Nodes
     var jieyin_Cancel : SKNode! //取消施法按钮
     var jieyin_Group : SKNode! //印式矩阵
@@ -39,6 +42,7 @@ class GameScene: SKScene {
     let attackButton = Buttons(buttonName: "attack" , textureName: "buttonX")
     var player : Avatar!
     var cameraNode : SKCameraNode?
+    var controllers : PlayerControllers?
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
@@ -61,10 +65,21 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         
+        
+
+        
         physicsWorld.contactDelegate = self
         
         
         loadUI()
+        
+//        if let testplayer = childNode(withName: "testplayer") {
+//            print("its")
+//            if let testcomponent = testplayer.entity?.component(ofType: PlayerControlComponent.self) {
+//                print("working")
+//                testcomponent.setup(scene: self, camera: cameraNode!)
+//            }
+//        }
         
         playerGSMachine = GKStateMachine(states: [
             IdleState(with: player),
@@ -91,10 +106,10 @@ class GameScene: SKScene {
         
         
         //Camera
-        cameraNode?.run(.move(to: CGPoint(x: player.position.x + 300, y: 0), duration: 0.15))
+        cameraNode?.run(.move(to: CGPoint(x: player.position.x + 300, y: 0), duration: 0.1))
         joystick?.position.y = cameraNode!.position.y - size.height/4
         joystick?.position.x = cameraNode!.position.x - size.width/3
-        
+
         //        jieyin_Cancel.position.y = cameraNode!.position.y - size.height/4
         //        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
         jieyin_Group.position.y = cameraNode!.position.y
@@ -234,7 +249,8 @@ extension GameScene {
         
         
         
-        
+//        controllers = PlayerControllers(frame: self.frame)
+//        addChild(controllers!)
         
     }
 }

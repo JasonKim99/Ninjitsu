@@ -105,7 +105,7 @@ class Avatar : SKSpriteNode {
     }
     
     func setPhysicBody(texture: SKTexture){
-        print(size)
+        
         physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 28, height: 45))
         zPosition = 0
         physicsBody!.isDynamic = true
