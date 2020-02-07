@@ -42,7 +42,7 @@ class GameScene: SKScene {
     let attackButton = Buttons(buttonName: "attack" , textureName: "buttonX")
     var player : Avatar!
     var cameraNode : SKCameraNode?
-    var controllers : PlayerControllers?
+//    var controllers : PlayerControllers?
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
@@ -64,9 +64,6 @@ class GameScene: SKScene {
     var playerGSMachine : GKStateMachine!
     
     override func didMove(to view: SKView) {
-        
-        
-
         
         physicsWorld.contactDelegate = self
         
@@ -114,14 +111,14 @@ class GameScene: SKScene {
         //        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
         jieyin_Group.position.y = cameraNode!.position.y
         jieyin_Group.position.x = cameraNode!.position.x
-        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
+        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 90
         jumpButton.position.x = cameraNode!.position.x + size.width/3
         dashButton.position.y = cameraNode!.position.y - size.height/4
-        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
-        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
+        dashButton.position.x = cameraNode!.position.x + size.width/3 + 90
+        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 90
         ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
         attackButton.position.y = cameraNode!.position.y - size.height/4
-        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
+        attackButton.position.x = cameraNode!.position.x + size.width/3 - 90
         
         //单位时间
         let deltaTime = currentTime - previousTimeInterval
@@ -132,7 +129,7 @@ class GameScene: SKScene {
         let xPosition = Double(joystickKnob.position.x)
         
         
-        if player.isInTheAir && player.vSpeed < 0 {
+        if player.vSpeed < 0 {
             playerGSMachine.enter(FallingState.self)
         }
         
@@ -192,26 +189,26 @@ extension GameScene {
         
         
         //跳跃按钮
-        jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 80)
+        jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 90)
         jumpButton.setScale(2.5)
         jumpButton.zPosition = 10
         addChild(jumpButton)
         
         
         //冲刺按钮
-        dashButton.position = CGPoint(x: size.width / 3 + 80 , y : -size.height/4 )
+        dashButton.position = CGPoint(x: size.width / 3 + 90 , y : -size.height/4 )
         dashButton.setScale(2.5)
         dashButton.zPosition = 1
         addChild(dashButton)
         
         //忍法按钮
-        ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 80)
+        ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 90)
         ninjitsuButton.setScale(2.5)
         ninjitsuButton.zPosition = 1
         addChild(ninjitsuButton)
         
         //攻击按钮
-        attackButton.position = CGPoint(x: size.width / 3 - 80 , y : -size.height/4)
+        attackButton.position = CGPoint(x: size.width / 3 - 90 , y : -size.height/4)
         attackButton.setScale(2.5)
         attackButton.zPosition = 1
         addChild(attackButton)
@@ -275,14 +272,12 @@ extension GameScene{
                 player.jumpCount -= 1
                 playerGSMachine.enter(JumpingState.self)
                 
-            }
-            
-            //点击冲刺
-            if dashButton.contains(location) && dashTimeLeft == 0 {
+            } else if dashButton.contains(location) && dashTimeLeft == 0{
+                //点击冲刺
                 dashButton.isPressed = true
                 playerGSMachine.enter(DashingState.self)
-                
             }
+
             
             
             //            //默认状态
