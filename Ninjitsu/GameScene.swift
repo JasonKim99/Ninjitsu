@@ -94,7 +94,7 @@ class GameScene: SKScene {
         
         
         //Camera
-        cameraNode?.position.x = player.position.x + 300
+        cameraNode?.run(.move(to: CGPoint(x: player.position.x + 300, y: 0), duration: 0.15))
         joystick?.position.y = cameraNode!.position.y - size.height/4
         joystick?.position.x = cameraNode!.position.x - size.width/3
         
@@ -144,14 +144,14 @@ class GameScene: SKScene {
         let displacement = CGVector(dx: deltaTime * xPosition * Double(player.runSpeed), dy: 0)
         let move = SKAction.move(by: displacement, duration: 0)
         let faceAction: SKAction!
-        let isMovingRight = xPosition > 0
-        let isMovingLeft = xPosition < 0
-        if isMovingLeft && player.isFacingRight{
+        player.isMovingRight = xPosition > 0
+        player.isMovingLeft = xPosition < 0
+        if player.isMovingLeft && player.isFacingRight{
             player.isFacingRight = false
             let turnArround = SKAction.scaleX(to: -abs(player!.xScale), duration: 0)
             faceAction = .sequence([move, turnArround])
             
-        } else if isMovingRight && !player.isFacingRight {
+        } else if player.isMovingRight && !player.isFacingRight {
             player.isFacingRight = true
             let turnArround = SKAction.scaleX(to: abs(player!.xScale), duration: 0)
             faceAction = .sequence([move, turnArround])
@@ -455,7 +455,7 @@ extension GameScene {
         shadownode.zPosition = self.player.zPosition
         addChild(shadownode)
         shadownode.run(.sequence([
-            .fadeOut(withDuration: 0.1),
+            .fadeOut(withDuration: 0.2),
             .run {
                 shadownode.removeFromParent()
             }

@@ -35,8 +35,8 @@ class Avatar : SKSpriteNode {
     var dyScale : CGFloat = 0.0
     
     //dash的距离
-    var dashX : CGFloat = 320.0
-    var dashY : CGFloat = 200.0
+    var dashX : CGFloat = 200.0
+    var dashY : CGFloat = 120.0
     
     //dashTime
     var dashTime : TimeInterval = 0.15
