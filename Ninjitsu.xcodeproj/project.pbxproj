@@ -30,7 +30,6 @@
 		E0B09F3A23E1771F00CD707B /* smoke.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3823E1771F00CD707B /* smoke.sks */; };
 		E0B09F3B23E1771F00CD707B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3923E1771F00CD707B /* Assets.xcassets */; };
 		E0B09F3D23E1773A00CD707B /* bokeh.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3C23E1773A00CD707B /* bokeh.sks */; };
-		E0B09F3F23E1777200CD707B /* firefly.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F3E23E1777200CD707B /* firefly.sks */; };
 		E0B09F4123E1779B00CD707B /* magic.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4023E1779B00CD707B /* magic.sks */; };
 		E0B09F4323E177BD00CD707B /* rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4223E177BD00CD707B /* rain.sks */; };
 		E0B09F4523E177F900CD707B /* snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4423E177F900CD707B /* snow.sks */; };
@@ -87,7 +86,6 @@
 		E0B09F3823E1771F00CD707B /* smoke.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = smoke.sks; sourceTree = "<group>"; };
 		E0B09F3923E1771F00CD707B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0B09F3C23E1773A00CD707B /* bokeh.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = bokeh.sks; sourceTree = "<group>"; };
-		E0B09F3E23E1777200CD707B /* firefly.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = firefly.sks; sourceTree = "<group>"; };
 		E0B09F4023E1779B00CD707B /* magic.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = magic.sks; sourceTree = "<group>"; };
 		E0B09F4223E177BD00CD707B /* rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = rain.sks; sourceTree = "<group>"; };
 		E0B09F4423E177F900CD707B /* snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = snow.sks; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 			isa = PBXGroup;
 			children = (
 				E0B09F3823E1771F00CD707B /* smoke.sks */,
-				E0B09F3E23E1777200CD707B /* firefly.sks */,
 				E0B09F4A23E1AD5B00CD707B /* fire.sks */,
 				E0B09F4223E177BD00CD707B /* rain.sks */,
 				E0B09F4423E177F900CD707B /* snow.sks */,
@@ -330,7 +327,6 @@
 				E0B09F3D23E1773A00CD707B /* bokeh.sks in Resources */,
 				E0B09F4723E1780E00CD707B /* spark.sks in Resources */,
 				E0FAFA8E23D89C4700BB114A /* Testscene.sks in Resources */,
-				E0B09F3F23E1777200CD707B /* firefly.sks in Resources */,
 				E0AF0B9D23D8858D00C8A2A4 /* Assets.xcassets in Resources */,
 				E00E0F5723EB2A2300A16BBA /* MyActions.sks in Resources */,
 				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,

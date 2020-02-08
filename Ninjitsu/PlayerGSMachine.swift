@@ -31,6 +31,21 @@ class PlayerGSMachine: GKState {
         player.xScale += xScale
         player.yScale += yScale
     }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+//        if !player.isDashing && player.vSpeed < 0 {
+//            player.stateMachine!.enter(FallingState.self)
+//        }
+//
+//        if !player.isInTheAir && !player.isDashing {
+//            if floor(abs(xPosition)) != 0 {
+//                player.stateMachine!.enter(RunningState.self)
+//            }
+//            else {
+//                player.stateMachine!.enter(IdleState.self)
+//            }
+//        }
+    }
 }
 
 
@@ -45,10 +60,17 @@ class IdleState: PlayerGSMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        player.run(action, withKey: animateKey)
-
         player.isSpelling = false
         player.isInTheAir = false
+        
+//        if previousState is FallingState {
+//            player.run(.sequence([
+//                .setTexture(SKTexture(imageNamed: "Sasuke/onground")),
+//                .
+//            ]))
+//        }
+        player.run(action, withKey: animateKey)
+
 //        scene.jieyin = ""
 //        scene.jieyin_Group.isHidden = true
 //        scene.jieyin_Cancel.isHidden = true
@@ -56,6 +78,15 @@ class IdleState: PlayerGSMachine {
 //
 //        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
 
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        if player.hSpeed != 0 {
+            player.stateMachine!.enter(RunningState.self)
+        }
+        if player.vSpeed < 0 {
+            player.stateMachine!.enter(FallingState.self)
+        }
     }
     override func willExit(to nextState: GKState) {
         player.removeAction(forKey: animateKey)
@@ -77,11 +108,20 @@ class RunningState: PlayerGSMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
+        player.isInTheAir = false
+        player.isDashing = false
         player.run(action, withKey: animateKey)
 
     }
 
-
+    override func update(deltaTime seconds: TimeInterval) {
+        if player.hSpeed == 0 {
+            player.stateMachine!.enter(IdleState.self)
+        }
+        if player.vSpeed < 0 {
+            player.stateMachine!.enter(FallingState.self)
+        }
+    }
 
     override func willExit(to nextState: GKState) {
         player.removeAction(forKey: animateKey)
@@ -101,12 +141,18 @@ class JumpingState: PlayerGSMachine {
         default: return false
         }
     }
-
+    
     override func didEnter(from previousState: GKState?) {
         player.isInTheAir = true
         player.run(action, withKey: animateKey)
 //        squashAndStrech(xScale: -0.5, yScale: 0.5)
         player.run(.applyImpulse(CGVector(dx: 0, dy: player.maxJumpForce), duration: 0.1))
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        if player.vSpeed < 0 {
+            player.stateMachine!.enter(FallingState.self)
+        }
     }
 
     override func willExit(to nextState: GKState) {
@@ -131,8 +177,18 @@ class FallingState : PlayerGSMachine {
 
     override func didEnter(from previousState: GKState?) {
         player.run(action, withKey: animateKey)
-
     }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        if player.vSpeed == 0 {
+            if player.hSpeed == 0 {
+                player.stateMachine?.enter(IdleState.self)
+            } else {
+                player.stateMachine?.enter(RunningState.self)
+            }
+        }
+    }
+    
     override func willExit(to nextState: GKState) {
         player.removeAction(forKey: animateKey)
 
@@ -145,6 +201,8 @@ class FallingState : PlayerGSMachine {
 class DashingState: PlayerGSMachine {
     var textures : [SKTexture] = (1...6).map({ return "Sasuke/Dash/dash\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
+    var shadowPool : [SKTexture] = []  //残影材质池子
+    var shadowTextureIndex : Int = 0
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
         case is SpellingState.Type, is NinjitsuAnimatingState.Type: return false
@@ -154,6 +212,12 @@ class DashingState: PlayerGSMachine {
     override func didEnter(from previousState: GKState?) {
         player.isDashing = true
         player.run(action, withKey: animateKey)
+        
+        for i in 1...6 {
+            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
+            shadowPool.append(shadow)
+        }
+        
 
         //在地上以及下降时的冲刺力度
         let groundDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: player.dashTime)
@@ -167,6 +231,44 @@ class DashingState: PlayerGSMachine {
             }
         ]))
 
+    }
+    
+    func addDashShadow(){
+        let shadownode = SKSpriteNode(texture: shadowPool[shadowTextureIndex])
+        shadownode.position = self.player.position
+        shadownode.xScale = self.player.xScale
+        shadownode.yScale = self.player.yScale
+        shadownode.zPosition = self.player.zPosition
+        player.parent!.addChild(shadownode)
+        shadownode.run(.sequence([
+            .fadeOut(withDuration: player.shadowFadeOut),
+            .run{
+                shadownode.removeFromParent()
+            }
+        ]))
+        if shadowTextureIndex < 5 {
+            shadowTextureIndex += 1
+        } else {
+            shadowTextureIndex = 0
+        }
+
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        addDashShadow()
+        if !player.isDashing {
+            if player.vSpeed < 0 {
+                player.stateMachine?.enter(FallingState.self)
+            }
+            if player.vSpeed == 0 {
+                if player.hSpeed == 0 {
+                    player.stateMachine?.enter(IdleState.self)
+                } else {
+                    player.stateMachine?.enter(RunningState.self)
+                }
+            }
+            
+        }
     }
     override func willExit(to nextState: GKState) {
         player.removeAction(forKey: animateKey)

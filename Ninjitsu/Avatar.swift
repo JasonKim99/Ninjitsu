@@ -37,7 +37,16 @@ class Avatar : SKSpriteNode {
     var dashTime : TimeInterval = 0.15
     var shadowFadeOut : TimeInterval = 0.15
     
-    var hSpeed : CGFloat = 0.0  //水平速度
+    var hSpeed : CGFloat { //水平速度
+        get {
+            if let dx = physicsBody?.velocity.dx {
+                return dx
+            } else {
+                return 0.0
+            }
+        }
+
+    }
     var vSpeed : CGFloat { //垂直速度
         get {
             if let dy = physicsBody?.velocity.dy {
@@ -57,7 +66,9 @@ class Avatar : SKSpriteNode {
                 return false
             }
         }
-        set {}
+        set {
+            
+        }
 
     }
     

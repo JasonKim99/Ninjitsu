@@ -60,7 +60,7 @@ class GameScene: SKScene {
     var isKnobMoving = false //是否在控制摇杆
     
     //Touches
-    var selectedNodes: [UITouch : CGPoint] = [ : ]
+    var selectedNodes: [UITouch : SKSpriteNode] = [ : ]
     
     //GameState
 //    var player.stateMachine! : GKStateMachine!
@@ -123,44 +123,44 @@ class GameScene: SKScene {
         attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
         
         //单位时间
-        let deltaTime = currentTime - previousTimeInterval
-        previousTimeInterval = currentTime
+//        let deltaTime = currentTime - previousTimeInterval
+//        previousTimeInterval = currentTime
         
         //Player Movement
         guard let joystickKnob = joystickKnob else { return }
-        let xPosition = Double(joystickKnob.position.x)
-        
-        
-        if player.vSpeed < 0 {
-            player.stateMachine!.enter(FallingState.self)
-        }
-        
-        
-        
-        //跑动还是默认状态机
-        if !player.isInTheAir && !player.isDashing {
-            if floor(abs(xPosition)) != 0 {
-                player.stateMachine!.enter(RunningState.self)
-            }
-            else {
-                player.stateMachine!.enter(IdleState.self)
-            }
-        }
-        
-        let displacement = CGVector(dx: deltaTime * xPosition * Double(player.runSpeed), dy: 0)
-        let move = SKAction.move(by: displacement, duration: 0)
-        player.run(move)
-
-        player.isMovingRight = xPosition > 0
+        let xPosition = joystickKnob.position.x
         player.isMovingLeft = xPosition < 0
+        player.isMovingRight = xPosition > 0
+        
+        player.physicsBody?.velocity.dx = xPosition * player.runSpeed
+        
+        
+        player.stateMachine?.update(deltaTime: currentTime)
+
+        
+//        if !player.isDashing && player.vSpeed < 0 {
+//            player.stateMachine!.enter(FallingState.self)
+//        }
+//        //跑动还是默认状态机
+//        if !player.isInTheAir && !player.isDashing {
+//            if floor(abs(xPosition)) != 0 {
+//                player.stateMachine!.enter(RunningState.self)
+//            }
+//            else {
+//                player.stateMachine!.enter(IdleState.self)
+//            }
+//        }
+        
+
+
+
         
         //增加冲刺残影
-        if player.isDashing{
-            addDashShadow()
-        }
+//        if player.isDashing{
+//            addDashShadow()
+//        }
         
-        
-        
+
         
     }
 }
@@ -182,6 +182,8 @@ extension GameScene {
         
         joystick = SKSpriteNode(imageNamed: "joystick")
         joystickKnob = SKSpriteNode(imageNamed: "knob")
+        joystick?.name = "joystick"
+        joystickKnob?.name = "knob"
         joystick?.setScale(0.8)
         joystickKnob?.setScale(2)
         joystick?.alpha = 0.5
@@ -248,11 +250,10 @@ extension GameScene {
         
         addChild(player)
         
-        for i in 1...6 {
-            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
-            shadowPool.append(shadow)
-        }
-        
+//        for i in 1...6 {
+//            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
+//            shadowPool.append(shadow)
+//        }
         
         
     }
@@ -271,21 +272,30 @@ extension GameScene{
             let location = touch.location(in: self)
             //如果点击摇杆
             isKnobMoving = joystick.contains(location)
+            if isKnobMoving && !selectedNodes.values.contains(joystick){
+                selectedNodes[touch] = joystick
+            }
             
             //点击跳跃
             if jumpButton.contains(location) && player.jumpCount > 0{
+                if !selectedNodes.values.contains(jumpButton) {
+                    selectedNodes[touch] = jumpButton
+                }
                 jumpButton.isPressed = true
                 player.jumpCount -= 1
                 player.stateMachine!.enter(JumpingState.self)
                 
             }
             if dashButton.contains(location) && dashTimeLeft == 0{
+                if !selectedNodes.values.contains(dashButton) {
+                    selectedNodes[touch] = dashButton
+                }
                 //点击冲刺
                 dashButton.isPressed = true
                 player.stateMachine!.enter(DashingState.self)
             }
 
-            
+        
             
             //            //默认状态
             //            if gameStateMachine.currentState is IdleState {
@@ -323,21 +333,31 @@ extension GameScene{
         guard let joystick = joystick else { return }
         guard let joystickKnob = joystickKnob else { return }
         //如果没有动摇杆就不用做什么了
-        if !isKnobMoving { return }
+//        if !isKnobMoving { return }
         
         //计算距离
         for touch in touches {
-            //            let location = touch.location(in: self) // scene的坐标系
-            let position = touch.location(in: joystick) //joystick里面的坐标系
-            let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
-            let angle = atan2(position.y, position.x)
+            if let node = selectedNodes[touch] {
+            if node.name == "jump"{
+                
+            } else if node.name == "dash" {
+                
+            } else if node.name == "joystick"{
+                let position = touch.location(in: joystick) //joystick里面的坐标系
+                let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
+                let angle = atan2(position.y, position.x)
+                
+                if knobRadius > length {
+                    joystickKnob.position = position
+                } else {
+                    joystickKnob.position = CGPoint(x: cos(angle) * knobRadius, y: sin(angle) * knobRadius)
+                }
             
-            if knobRadius > length {
-                joystickKnob.position = position
-            } else {
-                joystickKnob.position = CGPoint(x: cos(angle) * knobRadius, y: sin(angle) * knobRadius)
+            
+
+                }
             }
-            
+
         }
         
     }
@@ -346,30 +366,43 @@ extension GameScene{
         //        guard let joystick = joystick else { return }
         for touch in touches {
             
-            let location = touch.location(in: self)
-            let preventContactAreaXPostion = dashButton.position.x - 200
+            if selectedNodes[touch] != nil {
+                if (selectedNodes[touch] == jumpButton){
+                    jumpButton.isPressed = false
+                }
+                if (selectedNodes[touch] == dashButton){
+                    dashButton.isPressed = false
+                }
+                if (selectedNodes[touch] == joystick){
+                    resetKnobPosition()
+                    isKnobMoving = false
+                }
+                selectedNodes[touch] = nil
+            }
+//            let location = touch.location(in: self)
+//            let preventContactAreaXPostion = dashButton.position.x - 200
             
             //按钮旁边的位置防止误触
-            if location.x < preventContactAreaXPostion {
-                resetKnobPosition()
-                isKnobMoving = false
-            } else { isKnobMoving = true}
-            
-            if jumpButton.isPressed {
-                jumpButton.isPressed = false
-            }
-            if dashButton.isPressed {
-                dashButton.isPressed = false
-            }
+//            if location.x < preventContactAreaXPostion {
+//                resetKnobPosition()
+//                isKnobMoving = false
+//            } else { isKnobMoving = true}
+//
+//            if jumpButton.isPressed {
+//                jumpButton.isPressed = false
+//            }
+//            if dashButton.isPressed {
+//                dashButton.isPressed = false
+//            }
             
         }
         
         
-        
     }
-    
-    
 }
+    
+    
+
 
 //MARK: - Action
 extension GameScene {
@@ -595,7 +628,6 @@ extension GameScene: SKPhysicsContactDelegate  {
     func didBegin(_ contact: SKPhysicsContact) {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
-            //            player.texture = SKTexture(imageNamed: "Sasuke/onground")
             player.stateMachine!.enter(IdleState.self)
             player.jumpCount = 2
         }
