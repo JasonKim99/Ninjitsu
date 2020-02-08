@@ -15,7 +15,7 @@ class Avatar : SKSpriteNode {
     
     var runSpeed : CGFloat = 8.0 //跑步速度
     
-    var maxJumpForce : CGFloat = 30.0 //最大跳跃力
+    var maxJumpForce : CGFloat = 250.0 //最大跳跃力
     var jumpCount : Int  = 2
     
     var airAccelerate : CGFloat = 0.8  //空中加速度
@@ -35,7 +35,7 @@ class Avatar : SKSpriteNode {
     
     //dashTime
     var dashTime : TimeInterval = 0.15
-    var shadowFadeOut : TimeInterval = 0.15
+    var shadowFadeOut : TimeInterval = 0.3
     
     var hSpeed : CGFloat { //水平速度
         get {
@@ -124,7 +124,7 @@ class Avatar : SKSpriteNode {
         physicsBody!.affectedByGravity = true
         physicsBody!.allowsRotation = false
         physicsBody!.restitution = 0 //default 0.2 弹性
-        physicsBody!.friction = 0.2 //default 0.2 摩擦力
+        physicsBody!.friction = 0 //default 0.2 摩擦力
         
         physicsBody!.categoryBitMask = CollisionType.player.mask
         physicsBody!.collisionBitMask = CollisionType.ground.mask

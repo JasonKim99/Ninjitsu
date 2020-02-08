@@ -33,18 +33,7 @@ class PlayerGSMachine: GKState {
     }
     
     override func update(deltaTime seconds: TimeInterval) {
-//        if !player.isDashing && player.vSpeed < 0 {
-//            player.stateMachine!.enter(FallingState.self)
-//        }
-//
-//        if !player.isInTheAir && !player.isDashing {
-//            if floor(abs(xPosition)) != 0 {
-//                player.stateMachine!.enter(RunningState.self)
-//            }
-//            else {
-//                player.stateMachine!.enter(IdleState.self)
-//            }
-//        }
+
     }
 }
 
@@ -87,6 +76,7 @@ class IdleState: PlayerGSMachine {
         if player.vSpeed < 0 {
             player.stateMachine!.enter(FallingState.self)
         }
+
     }
     override func willExit(to nextState: GKState) {
         player.removeAction(forKey: animateKey)
@@ -109,7 +99,6 @@ class RunningState: PlayerGSMachine {
     }
     override func didEnter(from previousState: GKState?) {
         player.isInTheAir = false
-        player.isDashing = false
         player.run(action, withKey: animateKey)
 
     }
@@ -145,8 +134,7 @@ class JumpingState: PlayerGSMachine {
     override func didEnter(from previousState: GKState?) {
         player.isInTheAir = true
         player.run(action, withKey: animateKey)
-//        squashAndStrech(xScale: -0.5, yScale: 0.5)
-        player.run(.applyImpulse(CGVector(dx: 0, dy: player.maxJumpForce), duration: 0.1))
+        player.run(.applyForce(CGVector(dx: 0, dy: player.maxJumpForce), duration: 0.15))
     }
     
     override func update(deltaTime seconds: TimeInterval) {
@@ -212,7 +200,7 @@ class DashingState: PlayerGSMachine {
     override func didEnter(from previousState: GKState?) {
         player.isDashing = true
         player.run(action, withKey: animateKey)
-        
+        squashAndStrech(xScale: 0.6, yScale: -0.6)
         for i in 1...6 {
             let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
             shadowPool.append(shadow)
@@ -222,14 +210,17 @@ class DashingState: PlayerGSMachine {
         //在地上以及下降时的冲刺力度
         let groundDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: 0), duration: player.dashTime)
         let liftDash = SKAction.move(by: CGVector(dx: (player.isFacingRight ? player.dashX : -player.dashX), dy: player.dashY), duration: player.dashTime)
+        
 
+        
         //施力与状态变更
         player.run(.sequence([
-            player.isInTheAir && player.physicsBody!.velocity.dy > 0 ? liftDash : groundDash,
+            player.vSpeed > 0 ? liftDash : groundDash,
             .run {
                 self.player.isDashing = false
             }
         ]))
+
 
     }
     
@@ -255,8 +246,7 @@ class DashingState: PlayerGSMachine {
     }
     
     override func update(deltaTime seconds: TimeInterval) {
-        addDashShadow()
-        if !player.isDashing {
+        if player.isDashing {addDashShadow()} else {
             if player.vSpeed < 0 {
                 player.stateMachine?.enter(FallingState.self)
             }
@@ -267,7 +257,7 @@ class DashingState: PlayerGSMachine {
                     player.stateMachine?.enter(RunningState.self)
                 }
             }
-            
+        
         }
     }
     override func willExit(to nextState: GKState) {

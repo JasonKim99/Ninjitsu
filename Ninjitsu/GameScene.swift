@@ -151,7 +151,8 @@ class GameScene: SKScene {
 //            }
 //        }
         
-
+        player.xScale = approach(start: player.xScale, end: player.dxScale, shift: 0.05)
+        player.yScale = approach(start: player.yScale, end: player.dyScale, shift: 0.05)
 
 
         
@@ -567,7 +568,14 @@ extension GameScene {
         }
     }
     
-    
+
+    func approach(start: CGFloat, end:CGFloat  , shift: CGFloat) -> CGFloat {
+        if (start < end) {
+            return min(start + shift , end)
+        } else {
+            return max(start - shift , end)
+        }
+    }
     
     //    func animateNinpo() {
     //        let textureAtlas = SKTextureAtlas(named: "Gaara")
@@ -628,7 +636,7 @@ extension GameScene: SKPhysicsContactDelegate  {
     func didBegin(_ contact: SKPhysicsContact) {
         let collision = Collision(masks: (first: contact.bodyA.categoryBitMask , second: contact.bodyB.categoryBitMask))
         if collision.matches(.player, .ground){
-            player.stateMachine!.enter(IdleState.self)
+            player.isInTheAir = false
             player.jumpCount = 2
         }
     }
