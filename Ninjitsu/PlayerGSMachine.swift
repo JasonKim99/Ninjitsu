@@ -10,6 +10,7 @@ import Foundation
 import GameplayKit
 
 class PlayerGSMachine: GKState {
+    var frame : CGSize = CGSize(width: 1334, height: 750)
     var animateKey = "change"
     unowned var player: Avatar
 
@@ -49,15 +50,7 @@ class IdleState: PlayerGSMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        player.isSpelling = false
         player.isInTheAir = false
-        
-//        if previousState is FallingState {
-//            player.run(.sequence([
-//                .setTexture(SKTexture(imageNamed: "Sasuke/onground")),
-//                .
-//            ]))
-//        }
         player.run(action, withKey: animateKey)
 
 //        scene.jieyin = ""
@@ -271,7 +264,7 @@ class DashingState: PlayerGSMachine {
 //MARK: - 结印状态
 
 class SpellingState: PlayerGSMachine {
-    var timer = Timer()
+    
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
         case is IdleState.Type, is NinjitsuAnimatingState.Type:
@@ -280,30 +273,58 @@ class SpellingState: PlayerGSMachine {
             return false
         }
     }
+    
+    lazy var timer = Timer()
+    lazy var timeRemainingLabel = SKLabelNode()
+    lazy var jieyinLabel  = SKLabelNode()
+    var preTextures : [SKTexture] = (1...2).map({ return "Sasuke/Spell/\($0)"}).map(SKTexture.init)
+    var spellTexture1 : SKTexture = .init(imageNamed: "Sasuke/Spell/3")
+    var spellTexture2 : SKTexture = .init(imageNamed: "Sasuke/Spell/4")
+    lazy var preaction :SKAction = .animate(with: preTextures, timePerFrame: 0.2)
+    lazy var spellaction1 : SKAction = .setTexture(spellTexture1)
+    lazy var spellaction2 : SKAction = .setTexture(spellTexture2)
     override func didEnter(from previousState: GKState?) {
-//        var timeRemaining : TimeInterval = 10
-        player.isSpelling = true
-//        scene.ninjitsuButton.isHidden = true
-//        scene.jieyin_Group.isHidden = false
-//        scene.jieyin_Cancel.isHidden = false
-//        scene.jieyin_Group.run(.fadeIn(withDuration: 0.1))
-//        scene.jieyin_Cancel.run(.fadeIn(withDuration: 0.1))
-//        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
-//            self.scene.updateText(text: String(format: "%.1f", timeRemaining), node: &self.scene.timeRemainingLabel!)
-//            timeRemaining -= 0.1
-//            if timeRemaining > 0 {
-//                if ninpoDict.keys.contains(self.scene.jieyin){
-//                    //结印符合进行施法,进入施法阶段
-//                    self.stateMachine!.enter(NinjitsuAnimatingState.self)
-//                }
-//            } else {self.stateMachine!.enter(IdleState.self)}
-//        }
+        player.run(preaction)
+        jieyinLabel = player.generateText(with: player.jieyin, offsetX: 0, offsetY: 30)
+        timeRemainingLabel = player.generateText(with: String(format: "%.1f", player.spellingTime), offsetX: 150 , offsetY: 100)
+        player.addChild(timeRemainingLabel)
+        player.addChild(jieyinLabel)
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
+            self.player.updateText(text: String(format: "%.1f",self.player.spellingTime), node: &self.timeRemainingLabel)
+            self.player.spellingTime -= 0.1
+        }
 
     }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        
+        if player.jieyin.count > 0 {
+            if player.jieyin.count % 2 == 1 {
+                player.run(spellaction1)
+            } else {
+                player.run(spellaction2)
+            }
+            
+        }
+        
+        if ninpoDict.keys.contains(self.player.jieyin){
+            //结印符合进行施法,进入施法阶段
+            
+            self.stateMachine!.enter(NinjitsuAnimatingState.self)
+        }
+
+       player.updateText(text: player.jieyin, node: &jieyinLabel)
+    }
+    
     override func willExit(to nextState: GKState) {
         timer.invalidate()
+        jieyinLabel.removeFromParent()
+        timeRemainingLabel.removeFromParent()
+        player.jieyin = ""
+        player.spellingTime = 10
 //        self.scene.timeRemainingLabel!.removeFromParent()
     }
+    
 
 }
 

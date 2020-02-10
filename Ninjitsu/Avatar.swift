@@ -35,7 +35,7 @@ class Avatar : SKSpriteNode {
     
     //dashTime
     var dashTime : TimeInterval = 0.15
-    var shadowFadeOut : TimeInterval = 0.3
+    var shadowFadeOut : TimeInterval = 0.2
     
     var hSpeed : CGFloat { //水平速度
         get {
@@ -100,10 +100,12 @@ class Avatar : SKSpriteNode {
 
 
     
-    var isSpelling = false
+    var isSpelling = false 
+
     var isDashing = false
     
-    
+    var spellingTime : TimeInterval = 10
+    var jieyin = ""
     
     
     init(characterName: String, texture: SKTexture, scale : CGFloat) {
@@ -145,6 +147,35 @@ class Avatar : SKSpriteNode {
         ])
         stateMachine?.enter(IdleState.self)
     }
+    
+    func generateText(with text:String , offsetX :CGFloat , offsetY : CGFloat)  -> SKLabelNode {
+        let newnode = SKLabelNode()
+        newnode.position = CGPoint(x: offsetX, y: offsetY)
+        newnode.zPosition = 10
+        newnode.fontColor = .white
+        newnode.fontName = "DFWaWaSC-W5"
+        newnode.fontSize = 24
+        newnode.text = text
+        return newnode
+    }
+    
+    func updateText(text: String, node: inout SKLabelNode) {
+        let oldposition = node.position
+        let zPositon = node.zPosition
+        let xScale = node.xScale
+        let yScale = node.yScale
+        
+        node.removeFromParent()
+        
+        node = generateText(with: text, offsetX: oldposition.x,offsetY: oldposition.y)
+        node.zPosition = zPositon
+        node.xScale = xScale
+        node.yScale = yScale
+        node.alpha = 1
+        
+        addChild(node)
+    }
+
     
 
     required init?(coder aDecoder: NSCoder) {

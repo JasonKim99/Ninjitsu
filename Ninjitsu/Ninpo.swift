@@ -10,16 +10,16 @@ import Foundation
 import SpriteKit
 
 class Ninpo {
-    static var jieyin : String = ""
-    var isConvertableToNinpo : Bool {
-        if ninpoDict.keys.contains(Ninpo.jieyin) {
-            return true
-        }
-        return false
-    }
+    var jieyin : String = ""
+//    var isConvertableToNinpo : Bool {
+//        if ninpoDict.keys.contains(jieyin) {
+//            return true
+//        }
+//        return false
+//    }
     
     init(jieyin: String) {
-        Ninpo.self.jieyin = jieyin
+        self.jieyin = jieyin
     }
     
 }

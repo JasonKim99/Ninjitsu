@@ -13,6 +13,8 @@ import UIKit
 
 class GameScene: SKScene {
     
+    //MARK: - 声名
+    
     var entities = [GKEntity]()
     var graphs = [String : GKGraph]()
     
@@ -34,12 +36,7 @@ class GameScene: SKScene {
     var jieyinLabel : SKLabelNode?
     var ninpoLabel : SKLabelNode?
     var timeRemainingLabel : SKLabelNode?
-    var joystick: SKSpriteNode?
-    var joystickKnob: SKSpriteNode?
-    let jumpButton = Buttons(buttonName: "jump" , textureName: "buttonA")
-    let dashButton = Buttons(buttonName: "dash" , textureName: "buttonB")
-    let ninjitsuButton = Buttons(buttonName: "ninjitsu" , textureName: "buttonY")
-    let attackButton = Buttons(buttonName: "attack" , textureName: "buttonX")
+    var controllers: PlayerController?
     var player : Avatar!
     var cameraNode : SKCameraNode?
     var shadowPool : [SKTexture] = []
@@ -48,9 +45,7 @@ class GameScene: SKScene {
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
-    var jieyin = ""
     var spellTimeRemaining : TimeInterval = 10 //结印倒计时
-    var knobRadius : CGFloat = 100 //摇杆半径
     var difference : (CGFloat, CGFloat)?
     var previousTimeInterval : TimeInterval = 0
     let dashCoolDown : TimeInterval = 3
@@ -65,30 +60,13 @@ class GameScene: SKScene {
     //GameState
 //    var player.stateMachine! : GKStateMachine!
     
+    
+    //MARK: - didMove
     override func didMove(to view: SKView) {
         
         physicsWorld.contactDelegate = self
         
-        
         loadUI()
-        
-//        if let testplayer = childNode(withName: "testplayer") {
-//            print("its")
-//            if let testcomponent = testplayer.entity?.component(ofType: PlayerControlComponent.self) {
-//                print("working")
-//                testcomponent.setup(scene: self, camera: cameraNode!)
-//            }
-//        }
-        
-//        player.stateMachine! = GKStateMachine(states: [
-//            IdleState(with: player),
-//            RunningState(with: player),
-//            JumpingState(with: player),
-//            FallingState(with: player),
-//            DashingState(with: player),
-//            SpellingState(with: player),
-//            NinjitsuAnimatingState(with: player)
-//        ])
         
         //        查询字体名字
         //        for family in UIFont.familyNames.sorted() {
@@ -98,37 +76,38 @@ class GameScene: SKScene {
         
     }
     
-    //MARK: - GameLoop
+    //MARK: - Update
     
     override func update(_ currentTime: TimeInterval) {
         
         
-        
         //Camera
         cameraNode?.run(.move(to: CGPoint(x: player.position.x + 300, y: 0), duration: 0.1))
-        joystick?.position.y = cameraNode!.position.y - size.height/4
-        joystick?.position.x = cameraNode!.position.x - size.width/3
 
-        //        jieyin_Cancel.position.y = cameraNode!.position.y - size.height/4
-        //        jieyin_Cancel.position.x = cameraNode!.position.x + size.width/3
+        
+
         jieyin_Group.position.y = cameraNode!.position.y
         jieyin_Group.position.x = cameraNode!.position.x
-        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
-        jumpButton.position.x = cameraNode!.position.x + size.width/3
-        dashButton.position.y = cameraNode!.position.y - size.height/4
-        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
-        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
-        ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
-        attackButton.position.y = cameraNode!.position.y - size.height/4
-        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
+//        joystick!.position.y = cameraNode!.position.y - size.height/4
+//        joystick!.position.x = cameraNode!.position.x - size.width/3
+//        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
+//        jumpButton.position.x = cameraNode!.position.x + size.width/3
+//        dashButton.position.y = cameraNode!.position.y - size.height/4
+//        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
+//        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
+//        ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
+//        attackButton.position.y = cameraNode!.position.y - size.height/4
+//        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
+
+
         
         //单位时间
 //        let deltaTime = currentTime - previousTimeInterval
 //        previousTimeInterval = currentTime
         
         //Player Movement
-        guard let joystickKnob = joystickKnob else { return }
-        let xPosition = joystickKnob.position.x
+        guard let controllers = controllers else { return }
+        let xPosition = controllers.joystickKnob.position.x
         player.isMovingLeft = xPosition < 0
         player.isMovingRight = xPosition > 0
         
@@ -136,30 +115,16 @@ class GameScene: SKScene {
         
         
         player.stateMachine?.update(deltaTime: currentTime)
-
-        
-//        if !player.isDashing && player.vSpeed < 0 {
-//            player.stateMachine!.enter(FallingState.self)
-//        }
-//        //跑动还是默认状态机
-//        if !player.isInTheAir && !player.isDashing {
-//            if floor(abs(xPosition)) != 0 {
-//                player.stateMachine!.enter(RunningState.self)
-//            }
-//            else {
-//                player.stateMachine!.enter(IdleState.self)
-//            }
-//        }
         
         player.xScale = approach(start: player.xScale, end: player.dxScale, shift: 0.05)
         player.yScale = approach(start: player.yScale, end: player.dyScale, shift: 0.05)
-
-
         
-        //增加冲刺残影
-//        if player.isDashing{
-//            addDashShadow()
-//        }
+        
+        if player.spellingTime <= 0 {
+            controllers.isHidden = false
+            jieyin_Group.isHidden = true
+            player.stateMachine?.enter(IdleState.self)
+        }
         
 
         
@@ -180,49 +145,13 @@ extension GameScene {
         //摄像机
         cameraNode = (childNode(withName: "cameraNode") as! SKCameraNode)
         
+        controllers = PlayerController(frame: self.frame)
+        cameraNode?.addChild(controllers!)
         
-        joystick = SKSpriteNode(imageNamed: "joystick")
-        joystickKnob = SKSpriteNode(imageNamed: "knob")
-        joystick?.name = "joystick"
-        joystickKnob?.name = "knob"
-        joystick?.setScale(0.8)
-        joystickKnob?.setScale(2)
-        joystick?.alpha = 0.5
-        joystick!.addChild(joystickKnob!)
-        
-        joystick?.position = CGPoint(x: -size.width/3 , y: -size.height/4)
-        addChild(joystick!)
-        
-        
-        
-        //跳跃按钮
-        jumpButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 - 80)
-        jumpButton.setScale(2.5)
-        jumpButton.zPosition = 10
-        addChild(jumpButton)
-        
-        
-        //冲刺按钮
-        dashButton.position = CGPoint(x: size.width / 3 + 80 , y : -size.height/4 )
-        dashButton.setScale(2.5)
-        dashButton.zPosition = 1
-        addChild(dashButton)
-        
-        //忍法按钮
-        ninjitsuButton.position = CGPoint(x: size.width / 3 , y : -size.height/4 + 80)
-        ninjitsuButton.setScale(2.5)
-        ninjitsuButton.zPosition = 1
-        addChild(ninjitsuButton)
-        
-        //攻击按钮
-        attackButton.position = CGPoint(x: size.width / 3 - 80 , y : -size.height/4)
-        attackButton.setScale(2.5)
-        attackButton.zPosition = 1
-        addChild(attackButton)
         
         jieyin_Group = childNode(withName: "jieyin_Group")
-        jieyin_Group.isHidden = true
-        jieyin_Cancel = childNode(withName: "jieyin_Cancel")
+        
+        jieyin_Cancel = jieyin_Group.childNode(withName: "jieyin_Cancel")
         zi = jieyin_Group.childNode(withName: "jieyin_zi")!
         chou = jieyin_Group.childNode(withName: "jieyin_chou")!
         yin = jieyin_Group.childNode(withName: "jieyin_yin")!
@@ -235,15 +164,15 @@ extension GameScene {
         you = jieyin_Group.childNode(withName: "jieyin_you")!
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
-        
+        jieyin_Group.isHidden = true
         
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
         
-        //结印Label
-        jieyinLabel = generateText(from: jieyin, xPosition: 0, yPosition: 200)
-        
-        //倒计时Label
-        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
+//        //结印Label
+//        jieyinLabel = generateText(from: player.jieyin, xPosition: 0, yPosition: 200)
+//
+//        //倒计时Label
+//        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
         
         //初始化人物
         player = Avatar(characterName: "Sasuke", texture: SKTexture(imageNamed: "Sasuke/Idle/1"), scale: 2)
@@ -265,74 +194,80 @@ extension GameScene {
 //MARK: - Touches
 extension GameScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let joystick = joystick else { return }
-        //        guard let joystickKnob = joystickKnob else { return }
-        //        guard let player = player else { return }
+        guard let controllers = controllers else { return }
+
         for touch in touches {
             
-            let location = touch.location(in: self)
+            let location = touch.location(in: cameraNode!)
+            //因为controller在camera下面
             //如果点击摇杆
-            isKnobMoving = joystick.contains(location)
-            if isKnobMoving && !selectedNodes.values.contains(joystick){
-                selectedNodes[touch] = joystick
+            
+            if controllers.isHidden == false {
+                controllers.isKnobMoving = controllers.joystick.contains(location)
+                if controllers.isKnobMoving && !selectedNodes.values.contains(controllers.joystick){
+                    selectedNodes[touch] = controllers.joystick
+                }
+                
+                //点击跳跃
+                if controllers.jumpButton.contains(location) && player.jumpCount > 0{
+                    if !selectedNodes.values.contains(controllers.jumpButton) {
+                        selectedNodes[touch] = controllers.jumpButton
+                    }
+                    controllers.jumpButton.isPressed = true
+                    player.jumpCount -= 1
+                    player.stateMachine!.enter(JumpingState.self)
+                    
+                }
+                if controllers.dashButton.contains(location) && dashTimeLeft == 0{
+                    if !selectedNodes.values.contains(controllers.dashButton) {
+                        selectedNodes[touch] = controllers.dashButton
+                    }
+                    //点击冲刺
+                    controllers.dashButton.isPressed = true
+                    player.stateMachine!.enter(DashingState.self)
+                }
             }
             
-            //点击跳跃
-            if jumpButton.contains(location) && player.jumpCount > 0{
-                if !selectedNodes.values.contains(jumpButton) {
-                    selectedNodes[touch] = jumpButton
+            
+            if controllers.ninjitsuButton.contains(location) {
+                if !selectedNodes.values.contains(controllers.ninjitsuButton) {
+                    selectedNodes[touch] = controllers.ninjitsuButton
                 }
-                jumpButton.isPressed = true
-                player.jumpCount -= 1
-                player.stateMachine!.enter(JumpingState.self)
+                if player.stateMachine!.currentState is IdleState{
+                    controllers.isHidden = true
+                    jieyin_Group.isHidden = false
+                    player.stateMachine?.enter(SpellingState.self)
+                    
+                    //怎样才能知道时间走完了
+
+                }
+               
+            } else if player.stateMachine!.currentState is SpellingState {
+                
+                
+                for yinshi in twelveYin {
+                    if yinshi.key!.contains(location) {
+                        player.jieyin += yinshi.value
+                    }
+                }
+                
+                
+                
+                
+                if jieyin_Cancel.contains(location) {
+
+                    controllers.isHidden = false
+                    jieyin_Group.isHidden = true
+                    player.stateMachine!.enter(IdleState.self)
+                }
                 
             }
-            if dashButton.contains(location) && dashTimeLeft == 0{
-                if !selectedNodes.values.contains(dashButton) {
-                    selectedNodes[touch] = dashButton
-                }
-                //点击冲刺
-                dashButton.isPressed = true
-                player.stateMachine!.enter(DashingState.self)
-            }
-
-        
-            
-            //            //默认状态
-            //            if gameStateMachine.currentState is IdleState {
-            //
-            //                //如果点击忍法
-            //                if ninjitsu_Button.contains(location){
-            //                    gameStateMachine.enter(SpellingState.self)
-            //
-            //                }
-            //                //结印中
-            //            } else if gameStateMachine.currentState is SpellingState {
-            //
-            //
-            //                //如果点击到印式,存下来
-            //                for yinshi in twelveYin {
-            //                    if yinshi.key!.contains(location) {
-            //                        jieyin += yinshi.value
-            //                    }
-            //                }
-            //
-            //                //如果点到了取消按钮,返回默认状态
-            //                if jieyin_Cancel.contains(location) {
-            //                    gameStateMachine.enter(IdleState.self)
-            //                }
-            //
-            //                //每次点击更新所节的印
-            //                updateText(text: jieyin, node: &jieyinLabel!)
-            //            }
-            
             
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         //解包
-        guard let joystick = joystick else { return }
-        guard let joystickKnob = joystickKnob else { return }
+        guard let controllers = controllers else { return }
         //如果没有动摇杆就不用做什么了
 //        if !isKnobMoving { return }
         
@@ -343,15 +278,17 @@ extension GameScene{
                 
             } else if node.name == "dash" {
                 
+            } else if node.name == "ninjitsu"{
+                
             } else if node.name == "joystick"{
-                let position = touch.location(in: joystick) //joystick里面的坐标系
+                let position = touch.location(in: controllers.joystick) //joystick里面的坐标系
                 let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
                 let angle = atan2(position.y, position.x)
                 
-                if knobRadius > length {
-                    joystickKnob.position = position
+                if controllers.knobRadius > length {
+                    controllers.joystickKnob.position = position
                 } else {
-                    joystickKnob.position = CGPoint(x: cos(angle) * knobRadius, y: sin(angle) * knobRadius)
+                    controllers.joystickKnob.position = CGPoint(x: cos(angle) * controllers.knobRadius, y: sin(angle) * controllers.knobRadius)
                 }
             
             
@@ -364,37 +301,26 @@ extension GameScene{
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //注意当scene在移动时location在不停变化
-        //        guard let joystick = joystick else { return }
+        guard let controllers = controllers else { return }
         for touch in touches {
             
             if selectedNodes[touch] != nil {
-                if (selectedNodes[touch] == jumpButton){
-                    jumpButton.isPressed = false
+                if (selectedNodes[touch] == controllers.jumpButton){
+                    controllers.jumpButton.isPressed = false
                 }
-                if (selectedNodes[touch] == dashButton){
-                    dashButton.isPressed = false
+                if (selectedNodes[touch] == controllers.dashButton){
+                    controllers.dashButton.isPressed = false
                 }
-                if (selectedNodes[touch] == joystick){
-                    resetKnobPosition()
-                    isKnobMoving = false
+                if (selectedNodes[touch] == controllers.ninjitsuButton){
+                    controllers.ninjitsuButton.isPressed = false
+                }
+                if (selectedNodes[touch] == controllers.joystick){
+                    controllers.resetKnobPosition()
+                    controllers.isKnobMoving = false
                 }
                 selectedNodes[touch] = nil
             }
-//            let location = touch.location(in: self)
-//            let preventContactAreaXPostion = dashButton.position.x - 200
-            
-            //按钮旁边的位置防止误触
-//            if location.x < preventContactAreaXPostion {
-//                resetKnobPosition()
-//                isKnobMoving = false
-//            } else { isKnobMoving = true}
-//
-//            if jumpButton.isPressed {
-//                jumpButton.isPressed = false
-//            }
-//            if dashButton.isPressed {
-//                dashButton.isPressed = false
-//            }
+
             
         }
         
@@ -443,43 +369,6 @@ extension GameScene {
 //            }
 //        }
 //    }
-    
-    
-    
-    //重置摇杆位置
-    func resetKnobPosition() {
-        let initialPoint = CGPoint(x: 0, y: 0)
-        let moveBack = SKAction.move(to: initialPoint, duration: 0.1)
-        moveBack.timingMode = .linear
-        joystickKnob?.run(moveBack)
-        isKnobMoving = false
-    }
-    
-    
-    //dash动画
-    func addDashShadow(){
-        let shadownode = SKSpriteNode(texture: shadowPool[shadowTextureIndex])
-        shadownode.position = self.player.position
-        shadownode.xScale = self.player.xScale
-        shadownode.yScale = self.player.yScale
-        shadownode.zPosition = self.player.zPosition
-        addChild(shadownode)
-        shadownode.run(.sequence([
-            .fadeOut(withDuration: player.shadowFadeOut),
-            .run {
-                shadownode.removeFromParent()
-            }
-        ]))
-        if shadowTextureIndex < 5 {
-            shadowTextureIndex += 1
-        } else {
-            shadowTextureIndex = 0
-        }
-
-    }
-    
-    
-    
     //显示结印
     func generateText(from text:String, xPosition: CGFloat, yPosition: CGFloat)  -> SKLabelNode {
         let newnode = SKLabelNode()

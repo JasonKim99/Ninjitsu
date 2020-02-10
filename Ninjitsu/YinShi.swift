@@ -9,13 +9,9 @@
 import Foundation
 import SpriteKit
 
-class Yinshi: SKNode {
-    var yin : String!
+class Yinshi: SKSpriteNode {
+
     
-    init(yin: String) {
-        self.yin = "jieyin_" + yin
-        super.init()
-    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
