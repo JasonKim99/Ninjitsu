@@ -14,6 +14,7 @@
 		E06280B823F18CBD00F4E28A /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06280B023F1557D00F4E28A /* PlayerController.swift */; };
 		E078BE7523E6F7F500DA4BA7 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E078BE7423E6F7F500DA4BA7 /* Buttons.swift */; };
 		E088A02423ED8B5400691888 /* PlayerControlComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E088A02323ED8B5400691888 /* PlayerControlComponent.swift */; };
+		E0A61CC023F25030007AC106 /* MyScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0A61CBF23F25030007AC106 /* MyScene.sks */; };
 		E0AF0B9023D8858B00C8A2A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */; };
 		E0AF0B9223D8858B00C8A2A4 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */; };
 		E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */; };
@@ -66,6 +67,7 @@
 		E06280B623F1612900F4E28A /* ControlComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlComponent.swift; sourceTree = "<group>"; };
 		E078BE7423E6F7F500DA4BA7 /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		E088A02323ED8B5400691888 /* PlayerControlComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControlComponent.swift; sourceTree = "<group>"; };
+		E0A61CBF23F25030007AC106 /* MyScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyScene.sks; sourceTree = "<group>"; };
 		E0AF0B8C23D8858B00C8A2A4 /* Ninjitsu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ninjitsu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				E00E0F5823EB2A3700A16BBA /* runComponentTest */,
 				E00E0F5623EB2A2300A16BBA /* MyActions.sks */,
 				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
+				E0A61CBF23F25030007AC106 /* MyScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
 				E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */,
 				E00E0F5923EBA5CB00A16BBA /* Avatar.swift */,
@@ -330,6 +333,7 @@
 				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,
 				E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */,
 				E0AF0BA023D8858D00C8A2A4 /* LaunchScreen.storyboard in Resources */,
+				E0A61CC023F25030007AC106 /* MyScene.sks in Resources */,
 				E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

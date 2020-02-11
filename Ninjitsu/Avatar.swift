@@ -99,8 +99,22 @@ class Avatar : SKSpriteNode {
     }
 
 
-    
-    var isSpelling = false 
+    var isSpelling = false
+    var spellTimeOut = false
+    var isAnimatingNinPo = false {
+        didSet {
+            if isAnimatingNinPo {
+                endAnimateNinpo = false
+            }
+        }
+    }
+    var endAnimateNinpo = false {
+        didSet {
+            if endAnimateNinpo {
+                isAnimatingNinPo = false
+            }
+        }
+    }
 
     var isDashing = false
     

@@ -120,12 +120,22 @@ class GameScene: SKScene {
         player.yScale = approach(start: player.yScale, end: player.dyScale, shift: 0.05)
         
         
-        if player.spellingTime <= 0 {
+        if player.spellTimeOut {
             controllers.isHidden = false
             jieyin_Group.isHidden = true
-            player.stateMachine?.enter(IdleState.self)
+            player.spellTimeOut = false
         }
-        
+
+        if player.isAnimatingNinPo {
+            jieyin_Group.run(.fadeOut(withDuration: 0.1))
+            jieyin_Group.isHidden = true
+            controllers.isHidden = true
+        } else if player.endAnimateNinpo {
+            controllers.isHidden = false
+            jieyin_Group.isHidden = true
+            jieyin_Group.run(.fadeIn(withDuration: 0.1))
+            player.endAnimateNinpo = false
+        }
 
         
     }
@@ -165,6 +175,7 @@ extension GameScene {
         xu = jieyin_Group.childNode(withName: "jieyin_xu")!
         hai = jieyin_Group.childNode(withName: "jieyin_hai")!
         jieyin_Group.isHidden = true
+        jieyin_Group.zPosition = 11
         
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
         
@@ -226,40 +237,41 @@ extension GameScene{
                     controllers.dashButton.isPressed = true
                     player.stateMachine!.enter(DashingState.self)
                 }
+                
+                if controllers.ninjitsuButton.contains(location) {
+                    if !selectedNodes.values.contains(controllers.ninjitsuButton) {
+                        selectedNodes[touch] = controllers.ninjitsuButton
+                    }
+                    if player.stateMachine!.currentState is IdleState{
+                        player.stateMachine?.enter(SpellingState.self)
+                        controllers.isHidden = true
+                        jieyin_Group.isHidden = false
+                        
+                        //怎样才能知道时间走完了
+                        
+                    }
+                    
+                }
             }
             
-            
-            if controllers.ninjitsuButton.contains(location) {
-                if !selectedNodes.values.contains(controllers.ninjitsuButton) {
-                    selectedNodes[touch] = controllers.ninjitsuButton
-                }
-                if player.stateMachine!.currentState is IdleState{
-                    controllers.isHidden = true
-                    jieyin_Group.isHidden = false
-                    player.stateMachine?.enter(SpellingState.self)
+            if player.stateMachine!.currentState is SpellingState {
+                
+                if !jieyin_Group.isHidden {
+                    for yinshi in twelveYin {
+                        if yinshi.key!.contains(location) {
+                            player.jieyin += yinshi.value
+                        }
+                    }
                     
-                    //怎样才能知道时间走完了
 
-                }
-               
-            } else if player.stateMachine!.currentState is SpellingState {
-                
-                
-                for yinshi in twelveYin {
-                    if yinshi.key!.contains(location) {
-                        player.jieyin += yinshi.value
+                    if jieyin_Cancel.contains(location){
+
+                        controllers.isHidden = false
+                        jieyin_Group.isHidden = true
+                        player.stateMachine!.enter(IdleState.self)
                     }
                 }
-                
-                
-                
-                
-                if jieyin_Cancel.contains(location) {
 
-                    controllers.isHidden = false
-                    jieyin_Group.isHidden = true
-                    player.stateMachine!.enter(IdleState.self)
-                }
                 
             }
             

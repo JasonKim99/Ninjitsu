@@ -283,21 +283,38 @@ class SpellingState: PlayerGSMachine {
     lazy var preaction :SKAction = .animate(with: preTextures, timePerFrame: 0.2)
     lazy var spellaction1 : SKAction = .setTexture(spellTexture1)
     lazy var spellaction2 : SKAction = .setTexture(spellTexture2)
+    
+    
+    
     override func didEnter(from previousState: GKState?) {
-        player.run(preaction)
+        var timeRemaining : TimeInterval = player.spellingTime
+        player.run(preaction , withKey: animateKey)
         jieyinLabel = player.generateText(with: player.jieyin, offsetX: 0, offsetY: 30)
-        timeRemainingLabel = player.generateText(with: String(format: "%.1f", player.spellingTime), offsetX: 150 , offsetY: 100)
+        timeRemainingLabel = player.generateText(with: String(format: "%.1f", timeRemaining), offsetX: 150 , offsetY: 100)
         player.addChild(timeRemainingLabel)
         player.addChild(jieyinLabel)
+        
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) {_ in
-            self.player.updateText(text: String(format: "%.1f",self.player.spellingTime), node: &self.timeRemainingLabel)
-            self.player.spellingTime -= 0.1
+            self.player.updateText(text: String(format: "%.1f",timeRemaining), node: &self.timeRemainingLabel)
+            timeRemaining -= 0.1
+            if timeRemaining <= 0 {
+                self.player.spellTimeOut = true
+                self.player.stateMachine!.enter(IdleState.self)
+            }
         }
-
+        
     }
     
     override func update(deltaTime seconds: TimeInterval) {
         
+        player.updateText(text: player.jieyin, node: &self.jieyinLabel)
+        
+        if ninpoDict.keys.contains(player.jieyin){
+            //结印符合进行施法,进入施法阶段
+            self.player.stateMachine!.enter(NinjitsuAnimatingState.self)
+        }
+        
+         
         if player.jieyin.count > 0 {
             if player.jieyin.count % 2 == 1 {
                 player.run(spellaction1)
@@ -307,22 +324,24 @@ class SpellingState: PlayerGSMachine {
             
         }
         
-        if ninpoDict.keys.contains(self.player.jieyin){
-            //结印符合进行施法,进入施法阶段
-            
-            self.stateMachine!.enter(NinjitsuAnimatingState.self)
-        }
 
-       player.updateText(text: player.jieyin, node: &jieyinLabel)
+
+      
     }
     
     override func willExit(to nextState: GKState) {
         timer.invalidate()
-        jieyinLabel.removeFromParent()
+//        player.removeAllChildren()
+        if nextState is NinjitsuAnimatingState {
+            jieyinLabel.run(.fadeOut(withDuration: 0.2))
+            jieyinLabel.removeFromParent()
+        } else {
+            player.jieyin = ""
+            jieyinLabel.removeFromParent()
+        }
+        
         timeRemainingLabel.removeFromParent()
-        player.jieyin = ""
-        player.spellingTime = 10
-//        self.scene.timeRemainingLabel!.removeFromParent()
+        player.removeAction(forKey: animateKey)
     }
     
 
@@ -332,30 +351,83 @@ class SpellingState: PlayerGSMachine {
 //MARK: - 忍法动画状态
 class NinjitsuAnimatingState: PlayerGSMachine {
     var timer = Timer()
+    var ninpoLabel = SKLabelNode()
+    let preTextures : [SKTexture] = (1...7).map({ return "Sasuke/Huoqiuninpo/\($0)"}).map(SKTexture.init)
+    let repeatTextures: [SKTexture] = (1...9).map({ return "Sasuke/Huoqiurepeat/\($0)"}).map(SKTexture.init)
+    lazy var preaction :SKAction = .animate(with: preTextures, timePerFrame: 0.2)
+    lazy var repeataction : SKAction = .repeatForever(.animate(with: repeatTextures, timePerFrame: 0.2))
+    lazy var fire = SKEmitterNode()
+    
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         if stateClass is IdleState.Type { return true } else { return false }
     }
+    
+    
     override func didEnter(from previousState: GKState?) {
-//        scene.jieyinLabel?.run(.fadeOut(withDuration: 0.2))
-//        //显示忍法名称
-//        let ninpoNameText = ninpoDict[scene.jieyin]!.element.rawValue + " • " + ninpoDict[scene.jieyin]!.ninponame
-//        scene.ninpoLabel = scene.generateText(from: ninpoNameText, xPosition: 0, yPosition: 300)
-//        scene.addChild(scene.ninpoLabel!)
-//        scene.ninpoLabel?.run(.scale(by: 1.8, duration: 0.1))
-//        scene.jieyin_Group.run(.fadeOut(withDuration: 0.1))
-//        scene.jieyin_Cancel.run(.fadeOut(withDuration: 0.1))
-//        scene.jieyin_Group.isHidden = true
-//        scene.jieyin_Cancel.isHidden = true
-//        scene.ninjitsuButton.isHidden = true
+        player.isAnimatingNinPo = true
+        //显示忍法名称
+        let ninpoNameText = ninpoDict[player.jieyin]!.element.rawValue + " • " + ninpoDict[player.jieyin]!.ninponame
+        player.jieyin = ""
+        ninpoLabel = player.generateText(with: ninpoNameText, offsetX: 0, offsetY: 50)
+        player.addChild(ninpoLabel)
+        ninpoLabel.run(.scale(by: 1, duration: 0.1))
+        
+        
+        //动画的规格不同,所以要把默认大小和动画的大小保存下来
+        let dWidth = player.size.width
+        let dHeight = player.size.height
+        let pretextureWidth = preTextures[0].size().width * player.dxScale
+        let pretextureHeight = preTextures[0].size().height * player.dyScale
+        let retextureWidth = repeatTextures[0].size().width * player.dxScale
+        let retextureHeight = repeatTextures[0].size().height * player.dyScale
+        
+        
+        //创建火粒子
+        fire = SKEmitterNode(fileNamed: "fire1")!
+        fire.zPosition = 10
+ 
+        let wholeAction : SKAction = .sequence([
+            .run {
+                self.player.size = CGSize(width: pretextureWidth, height: pretextureHeight)
+            },
+            preaction,
+            .run {
+                self.player.size = CGSize(width: retextureWidth, height: retextureHeight)
+            },
+            .group([
+                repeataction,
+                .run {
+                    self.player.addChild(self.fire)
+                    self.fire.run(.moveBy(x: 100, y: 0, duration: 0.2))
+                }
+            ])
+        ])
+        player.run(wholeAction , withKey: animateKey)
 
-        timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false){_ in
-            self.stateMachine!.enter(IdleState.self)
+            //            let physicsBody = SKPhysicsBody(circleOfRadius: 10)
+            //            fire.physicsBody = physicsBody
+            //            physicsBody.affectedByGravity = false
+            //            physicsBody.velocity = CGVector(dx: 100, dy: 200)
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false){_ in
+            self.player.size = CGSize(width: dWidth, height: dHeight)
+            self.player.endAnimateNinpo = true
+            self.player.stateMachine!.enter(IdleState.self)
         }
     }
     override func willExit(to nextState: GKState) {
         timer.invalidate()
+        fire.run(.fadeOut(withDuration: 0.5))
+        fire.removeFromParent()
+        ninpoLabel.removeFromParent()
+        player.removeAction(forKey: animateKey)
 //        self.scene.jieyin = ""
 //        self.scene.ninpoLabel!.removeFromParent()
     }
+    
+    
+    
+    
+    
 }
 
