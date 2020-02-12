@@ -41,7 +41,7 @@ class GameScene: SKScene {
     var cameraNode : SKCameraNode?
     var shadowPool : [SKTexture] = []
     var shadowTextureIndex : Int = 0
-//    var controllers : PlayerControllers?
+    //    var controllers : PlayerControllers?
     
     //stats
     var twelveYin :[SKNode? : String] = [:]
@@ -58,10 +58,17 @@ class GameScene: SKScene {
     var selectedNodes: [UITouch : SKSpriteNode] = [ : ]
     
     //GameState
-//    var player.stateMachine! : GKStateMachine!
+    //    var player.stateMachine! : GKStateMachine!
     
+}
+//MARK: - didLoad, didMove
+
+extension GameScene {
     
-    //MARK: - didMove
+    override func sceneDidLoad() {
+        
+    }
+    
     override func didMove(to view: SKView) {
         
         physicsWorld.contactDelegate = self
@@ -83,27 +90,27 @@ class GameScene: SKScene {
         
         //Camera
         cameraNode?.run(.move(to: CGPoint(x: player.position.x, y: 0), duration: 0.1))
-
         
-
+        
+        
         jieyin_Group.position.y = cameraNode!.position.y
         jieyin_Group.position.x = cameraNode!.position.x
-//        joystick!.position.y = cameraNode!.position.y - size.height/4
-//        joystick!.position.x = cameraNode!.position.x - size.width/3
-//        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
-//        jumpButton.position.x = cameraNode!.position.x + size.width/3
-//        dashButton.position.y = cameraNode!.position.y - size.height/4
-//        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
-//        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
-//        ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
-//        attackButton.position.y = cameraNode!.position.y - size.height/4
-//        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
-
-
+        //        joystick!.position.y = cameraNode!.position.y - size.height/4
+        //        joystick!.position.x = cameraNode!.position.x - size.width/3
+        //        jumpButton.position.y = cameraNode!.position.y - size.height/4 - 80
+        //        jumpButton.position.x = cameraNode!.position.x + size.width/3
+        //        dashButton.position.y = cameraNode!.position.y - size.height/4
+        //        dashButton.position.x = cameraNode!.position.x + size.width/3 + 80
+        //        ninjitsuButton.position.y = cameraNode!.position.y - size.height/4 + 80
+        //        ninjitsuButton.position.x = cameraNode!.position.x + size.width/3
+        //        attackButton.position.y = cameraNode!.position.y - size.height/4
+        //        attackButton.position.x = cameraNode!.position.x + size.width/3 - 80
+        
+        
         
         //单位时间
-//        let deltaTime = currentTime - previousTimeInterval
-//        previousTimeInterval = currentTime
+        //        let deltaTime = currentTime - previousTimeInterval
+        //        previousTimeInterval = currentTime
         
         //Player Movement
         guard let controllers = controllers else { return }
@@ -125,7 +132,7 @@ class GameScene: SKScene {
             jieyin_Group.isHidden = true
             player.spellTimeOut = false
         }
-
+        
         if player.isAnimatingNinPo {
             jieyin_Group.run(.fadeOut(withDuration: 0.1))
             jieyin_Group.isHidden = true
@@ -136,8 +143,8 @@ class GameScene: SKScene {
             jieyin_Group.run(.fadeIn(withDuration: 0.1))
             player.endAnimateNinpo = false
         }
-
-
+        
+        
         
     }
 }
@@ -180,11 +187,11 @@ extension GameScene {
         
         twelveYin = [zi : "子", chou : "丑", yin : "寅", mao : "卯", chen : "辰", si : "巳", wu : "午", wei : "未", shen : "申", you : "酉", xu : "戌", hai :"亥"]
         
-//        //结印Label
-//        jieyinLabel = generateText(from: player.jieyin, xPosition: 0, yPosition: 200)
-//
-//        //倒计时Label
-//        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
+        //        //结印Label
+        //        jieyinLabel = generateText(from: player.jieyin, xPosition: 0, yPosition: 200)
+        //
+        //        //倒计时Label
+        //        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
         
         //初始化人物
         player = Avatar(characterName: "Sasuke", texture: SKTexture(imageNamed: "Sasuke/Idle/Idle1"), scale: 2)
@@ -192,10 +199,10 @@ extension GameScene {
         
         addChild(player)
         
-//        for i in 1...6 {
-//            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
-//            shadowPool.append(shadow)
-//        }
+        //        for i in 1...6 {
+        //            let shadow = SKTexture(imageNamed: "Sasuke/Dash/dash\(i)")
+        //            shadowPool.append(shadow)
+        //        }
         
         
         
@@ -214,7 +221,7 @@ extension GameScene {
 extension GameScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let controllers = controllers else { return }
-
+        
         for touch in touches {
             
             let location = touch.location(in: cameraNode!)
@@ -271,15 +278,15 @@ extension GameScene{
                         }
                     }
                     
-
+                    
                     if jieyin_Cancel.contains(location){
-
+                        
                         controllers.isHidden = false
                         jieyin_Group.isHidden = true
                         player.stateMachine!.enter(IdleState.self)
                     }
                 }
-
+                
                 
             }
             
@@ -289,33 +296,33 @@ extension GameScene{
         //解包
         guard let controllers = controllers else { return }
         //如果没有动摇杆就不用做什么了
-//        if !isKnobMoving { return }
+        //        if !isKnobMoving { return }
         
         //计算距离
         for touch in touches {
             if let node = selectedNodes[touch] {
-            if node.name == "jump"{
-                
-            } else if node.name == "dash" {
-                
-            } else if node.name == "ninjitsu"{
-                
-            } else if node.name == "joystick"{
-                let position = touch.location(in: controllers.joystick) //joystick里面的坐标系
-                let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
-                let angle = atan2(position.y, position.x)
-                
-                if controllers.knobRadius > length {
-                    controllers.joystickKnob.position = position
-                } else {
-                    controllers.joystickKnob.position = CGPoint(x: cos(angle) * controllers.knobRadius, y: sin(angle) * controllers.knobRadius)
-                }
-            
-            
-
+                if node.name == "jump"{
+                    
+                } else if node.name == "dash" {
+                    
+                } else if node.name == "ninjitsu"{
+                    
+                } else if node.name == "joystick"{
+                    let position = touch.location(in: controllers.joystick) //joystick里面的坐标系
+                    let length = sqrt(pow(position.y, 2) + pow(position.x, 2))
+                    let angle = atan2(position.y, position.x)
+                    
+                    if controllers.knobRadius > length {
+                        controllers.joystickKnob.position = position
+                    } else {
+                        controllers.joystickKnob.position = CGPoint(x: cos(angle) * controllers.knobRadius, y: sin(angle) * controllers.knobRadius)
+                    }
+                    
+                    
+                    
                 }
             }
-
+            
         }
         
     }
@@ -340,15 +347,15 @@ extension GameScene{
                 }
                 selectedNodes[touch] = nil
             }
-
+            
             
         }
         
         
     }
 }
-    
-    
+
+
 
 
 //MARK: - Action
@@ -356,39 +363,39 @@ extension GameScene {
     
     
     //遍历tilemap
-//    func generateTileMapPhysicBody(map: SKTileMapNode){
-//        let tileSize = map.tileSize
-//        let halfWidth = CGFloat(map.numberOfColumns) / 2 * tileSize.width
-//        let halfHeight = CGFloat(map.numberOfRows) / 2 * tileSize.height
-//
-//        for col in 0..<map.numberOfColumns{
-//            for row in 0..<map.numberOfRows{
-//                if let tileDefinition = map.tileDefinition(atColumn: col, row: row) {
-//                    let textures = tileDefinition.textures
-//                    let tileTexture = textures.first
-//                    let xPosition = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width / 2)
-//                    let yPosition = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height / 2)
-//
-//                    //每个模块建立刚体
-//                    let tileCell = SKSpriteNode(texture: tileTexture)
-//                    tileCell.position = CGPoint(x: xPosition, y: yPosition)
-//                    tileCell.zPosition = -1
-//                    tileCell.physicsBody = SKPhysicsBody(rectangleOf: tileTexture!.size())
-//                    tileCell.setScale(2)
-//                    tileCell.physicsBody?.isDynamic = false
-//                    tileCell.physicsBody?.affectedByGravity = false
-//                    tileCell.physicsBody?.linearDamping = 60
-//                    tileCell.physicsBody?.friction = 1
-//
-//                    tileCell.physicsBody?.categoryBitMask = CollisionType.ground.mask
-//                    tileCell.physicsBody?.collisionBitMask = CollisionType.player.mask
-//                    tileCell.physicsBody?.contactTestBitMask = CollisionType.player.mask
-//
-//                    addChild(tileCell)
-//                }
-//            }
-//        }
-//    }
+    //    func generateTileMapPhysicBody(map: SKTileMapNode){
+    //        let tileSize = map.tileSize
+    //        let halfWidth = CGFloat(map.numberOfColumns) / 2 * tileSize.width
+    //        let halfHeight = CGFloat(map.numberOfRows) / 2 * tileSize.height
+    //
+    //        for col in 0..<map.numberOfColumns{
+    //            for row in 0..<map.numberOfRows{
+    //                if let tileDefinition = map.tileDefinition(atColumn: col, row: row) {
+    //                    let textures = tileDefinition.textures
+    //                    let tileTexture = textures.first
+    //                    let xPosition = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width / 2)
+    //                    let yPosition = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height / 2)
+    //
+    //                    //每个模块建立刚体
+    //                    let tileCell = SKSpriteNode(texture: tileTexture)
+    //                    tileCell.position = CGPoint(x: xPosition, y: yPosition)
+    //                    tileCell.zPosition = -1
+    //                    tileCell.physicsBody = SKPhysicsBody(rectangleOf: tileTexture!.size())
+    //                    tileCell.setScale(2)
+    //                    tileCell.physicsBody?.isDynamic = false
+    //                    tileCell.physicsBody?.affectedByGravity = false
+    //                    tileCell.physicsBody?.linearDamping = 60
+    //                    tileCell.physicsBody?.friction = 1
+    //
+    //                    tileCell.physicsBody?.categoryBitMask = CollisionType.ground.mask
+    //                    tileCell.physicsBody?.collisionBitMask = CollisionType.player.mask
+    //                    tileCell.physicsBody?.contactTestBitMask = CollisionType.player.mask
+    //
+    //                    addChild(tileCell)
+    //                }
+    //            }
+    //        }
+    //    }
     //显示结印
     func generateText(from text:String, xPosition: CGFloat, yPosition: CGFloat)  -> SKLabelNode {
         let newnode = SKLabelNode()
@@ -477,7 +484,7 @@ extension GameScene {
         }
     }
     
-
+    
     func approach(start: CGFloat, end:CGFloat  , shift: CGFloat) -> CGFloat {
         if (start < end) {
             return min(start + shift , end)
