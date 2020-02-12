@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class Ninpo {
+struct Ninpo {
     var jieyin : String = ""
 //    var isConvertableToNinpo : Bool {
 //        if ninpoDict.keys.contains(jieyin) {

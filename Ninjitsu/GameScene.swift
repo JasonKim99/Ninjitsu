@@ -198,6 +198,13 @@ extension GameScene {
 //        }
         
         
+        
+        let testplayer = PlayerEntity(characterName: "Gaara").spriteComponent.node
+        
+        
+        
+        
+        
     }
 }
 

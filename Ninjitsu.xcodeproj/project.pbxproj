@@ -38,6 +38,10 @@
 		E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4A23E1AD5B00CD707B /* fire.sks */; };
 		E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */ = {isa = PBXBuildFile; fileRef = E0B09F4C23E1C00800CD707B /* fire1.sks */; };
 		E0CF07AB23F0441B00B6F887 /* ControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CF07AA23F0441B00B6F887 /* ControllerProtocol.swift */; };
+		E0DCAC9023F3D19D007DB3DC /* AvatarEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DCAC8F23F3D19D007DB3DC /* AvatarEntity.swift */; };
+		E0DCAC9223F3D1CA007DB3DC /* SpriteComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DCAC9123F3D1CA007DB3DC /* SpriteComponent.swift */; };
+		E0DCAC9523F400CA007DB3DC /* AnimationComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DCAC9423F400CA007DB3DC /* AnimationComponent.swift */; };
+		E0DCAC9823F42A79007DB3DC /* PlayerEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0DCAC9723F42A79007DB3DC /* PlayerEntity.swift */; };
 		E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */; };
 		E0FAFA9023D93D0900BB114A /* PlayerGSMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */; };
 /* End PBXBuildFile section */
@@ -95,6 +99,10 @@
 		E0B09F4A23E1AD5B00CD707B /* fire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire.sks; sourceTree = "<group>"; };
 		E0B09F4C23E1C00800CD707B /* fire1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fire1.sks; sourceTree = "<group>"; };
 		E0CF07AA23F0441B00B6F887 /* ControllerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerProtocol.swift; sourceTree = "<group>"; };
+		E0DCAC8F23F3D19D007DB3DC /* AvatarEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarEntity.swift; sourceTree = "<group>"; };
+		E0DCAC9123F3D1CA007DB3DC /* SpriteComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteComponent.swift; sourceTree = "<group>"; };
+		E0DCAC9423F400CA007DB3DC /* AnimationComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationComponent.swift; sourceTree = "<group>"; };
+		E0DCAC9723F42A79007DB3DC /* PlayerEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerEntity.swift; sourceTree = "<group>"; };
 		E0FAFA8923D8910E00BB114A /* WawaSC-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WawaSC-Regular.otf"; sourceTree = "<group>"; };
 		E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerGSMachine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -159,18 +167,21 @@
 			children = (
 				E0AF0B8F23D8858B00C8A2A4 /* AppDelegate.swift */,
 				E00E0F5823EB2A3700A16BBA /* runComponentTest */,
+				E0DCAC9923F43099007DB3DC /* test */,
 				E00E0F5623EB2A2300A16BBA /* MyActions.sks */,
-				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0A61CBF23F25030007AC106 /* MyScene.sks */,
+				E0AF0B9123D8858B00C8A2A4 /* GameScene.sks */,
 				E0AF0B9523D8858B00C8A2A4 /* GameScene.swift */,
-				E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */,
 				E00E0F5923EBA5CB00A16BBA /* Avatar.swift */,
+				E0FAFA8F23D93D0900BB114A /* PlayerGSMachine.swift */,
+				E078BE7423E6F7F500DA4BA7 /* Buttons.swift */,
 				E033B32E23EC6C0500274DD7 /* Collision.swift */,
+				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
+				E0DCAC9623F41BC3007DB3DC /* Entities */,
+				E0DCAC9323F40057007DB3DC /* Components */,
 				E06280B023F1557D00F4E28A /* PlayerController.swift */,
 				E0B09F3723E176EE00CD707B /* particleeffect */,
-				E0B09F2923D9C01A00CD707B /* Ninpo.swift */,
 				E0B09F2B23D9C1C100CD707B /* YinShi.swift */,
-				E078BE7423E6F7F500DA4BA7 /* Buttons.swift */,
 				E0AF0B9723D8858B00C8A2A4 /* GameViewController.swift */,
 				E0AF0B9923D8858B00C8A2A4 /* Main.storyboard */,
 				E0AF0B9C23D8858D00C8A2A4 /* Assets.xcassets */,
@@ -213,6 +224,31 @@
 				E0B09F3923E1771F00CD707B /* Assets.xcassets */,
 			);
 			path = particleeffect;
+			sourceTree = "<group>";
+		};
+		E0DCAC9323F40057007DB3DC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E0DCAC9123F3D1CA007DB3DC /* SpriteComponent.swift */,
+				E0DCAC9423F400CA007DB3DC /* AnimationComponent.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		E0DCAC9623F41BC3007DB3DC /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				E0DCAC8F23F3D19D007DB3DC /* AvatarEntity.swift */,
+				E0DCAC9723F42A79007DB3DC /* PlayerEntity.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		E0DCAC9923F43099007DB3DC /* test */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = test;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -362,9 +398,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E033B32F23EC6C0500274DD7 /* Collision.swift in Sources */,
+				E0DCAC9223F3D1CA007DB3DC /* SpriteComponent.swift in Sources */,
 				E0CF07AB23F0441B00B6F887 /* ControllerProtocol.swift in Sources */,
+				E0DCAC9823F42A79007DB3DC /* PlayerEntity.swift in Sources */,
+				E0DCAC9023F3D19D007DB3DC /* AvatarEntity.swift in Sources */,
 				E078BE7523E6F7F500DA4BA7 /* Buttons.swift in Sources */,
 				E0AF0B9623D8858B00C8A2A4 /* GameScene.swift in Sources */,
+				E0DCAC9523F400CA007DB3DC /* AnimationComponent.swift in Sources */,
 				E06280B723F1612900F4E28A /* ControlComponent.swift in Sources */,
 				E0B09F2C23D9C1C100CD707B /* YinShi.swift in Sources */,
 				E0B09F2A23D9C01A00CD707B /* Ninpo.swift in Sources */,
@@ -550,6 +590,7 @@
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 866P8FQN2F;
 				INFOPLIST_FILE = Ninjitsu/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -570,6 +611,7 @@
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 866P8FQN2F;
 				INFOPLIST_FILE = Ninjitsu/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

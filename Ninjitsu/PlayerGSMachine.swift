@@ -98,11 +98,6 @@ class RunningState: PlayerGSMachine {
             .resize(toWidth: textureWidth, height: textureHeight, duration: 0),
             action
         ])
-//        print(textureWidth)
-//        print(textureHeight)
-//        print(player.xScale)
-//        print(player.size)
-//        print(player.dSize)
         player.run(wholeAction, withKey: animateKey)
 
     }
