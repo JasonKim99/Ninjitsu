@@ -41,7 +41,7 @@ class PlayerGSMachine: GKState {
 
 //MARK: - 默认状态
 class IdleState: PlayerGSMachine {
-    var textures : [SKTexture] = (1...4).map({ return "Sasuke/Idle/\($0)"}).map(SKTexture.init)
+    var textures : [SKTexture] = (1...6).map({ return "Sasuke/Idle/Idle\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.25))
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
@@ -80,8 +80,9 @@ class IdleState: PlayerGSMachine {
 //MARK: - 跑步状态
 
 class RunningState: PlayerGSMachine {
-    let textures : [SKTexture] = (1...6).map({ return "Sasuke/Run/\($0)"}).map(SKTexture.init)
+    let textures : [SKTexture] = (1...6).map({ return "Sasuke/Run/run\($0)"}).map(SKTexture.init)
     lazy var action :SKAction = .repeatForever(.animate(with: textures, timePerFrame: 0.1))
+
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
         case is RunningState.Type,
@@ -91,22 +92,38 @@ class RunningState: PlayerGSMachine {
         }
     }
     override func didEnter(from previousState: GKState?) {
-        player.isInTheAir = false
-        player.run(action, withKey: animateKey)
+        let textureWidth = textures[0].size().width
+        let textureHeight = textures[0].size().height
+        let wholeAction : SKAction = .sequence([
+            .resize(toWidth: textureWidth, height: textureHeight, duration: 0),
+            action
+        ])
+//        print(textureWidth)
+//        print(textureHeight)
+//        print(player.xScale)
+//        print(player.size)
+//        print(player.dSize)
+        player.run(wholeAction, withKey: animateKey)
 
     }
 
     override func update(deltaTime seconds: TimeInterval) {
+        
+
         if player.hSpeed == 0 {
             player.stateMachine!.enter(IdleState.self)
         }
         if player.vSpeed < 0 {
+            
             player.stateMachine!.enter(FallingState.self)
         }
     }
 
     override func willExit(to nextState: GKState) {
+        player.run(.resize(toWidth: player.dSize.width, height: player.dSize.height, duration: 0))
         player.removeAction(forKey: animateKey)
+        
+
     }
 }
 
@@ -277,9 +294,9 @@ class SpellingState: PlayerGSMachine {
     lazy var timer = Timer()
     lazy var timeRemainingLabel = SKLabelNode()
     lazy var jieyinLabel  = SKLabelNode()
-    var preTextures : [SKTexture] = (1...2).map({ return "Sasuke/Spell/\($0)"}).map(SKTexture.init)
-    var spellTexture1 : SKTexture = .init(imageNamed: "Sasuke/Spell/3")
-    var spellTexture2 : SKTexture = .init(imageNamed: "Sasuke/Spell/4")
+    var preTextures : [SKTexture] = (1...2).map({ return "Sasuke/Spell/ninpo\($0)"}).map(SKTexture.init)
+    var spellTexture1 : SKTexture = .init(imageNamed: "Sasuke/Spell/ninpo3")
+    var spellTexture2 : SKTexture = .init(imageNamed: "Sasuke/Spell/ninpo4")
     lazy var preaction :SKAction = .animate(with: preTextures, timePerFrame: 0.2)
     lazy var spellaction1 : SKAction = .setTexture(spellTexture1)
     lazy var spellaction2 : SKAction = .setTexture(spellTexture2)
@@ -287,9 +304,21 @@ class SpellingState: PlayerGSMachine {
     
     
     override func didEnter(from previousState: GKState?) {
+        
+        let pretextureWidth = preTextures[0].size().width
+        let pretextureHeight = preTextures[0].size().height
+        
+        let wholeAction : SKAction = .sequence([
+            .resize(toWidth: pretextureWidth, height: pretextureHeight, duration: 0),
+            preaction
+        ])
+        
+        
+        player.run(wholeAction , withKey: animateKey)
         var timeRemaining : TimeInterval = player.spellingTime
-        player.run(preaction , withKey: animateKey)
+        
         jieyinLabel = player.generateText(with: player.jieyin, offsetX: 0, offsetY: 30)
+        jieyinLabel.fontSize = 12
         timeRemainingLabel = player.generateText(with: String(format: "%.1f", timeRemaining), offsetX: 150 , offsetY: 100)
         player.addChild(timeRemainingLabel)
         player.addChild(jieyinLabel)
@@ -341,7 +370,10 @@ class SpellingState: PlayerGSMachine {
         }
         
         timeRemainingLabel.removeFromParent()
+        player.run(.resize(toWidth: player.dSize.width, height: player.dSize.height, duration: 0))
         player.removeAction(forKey: animateKey)
+        
+        
     }
     
 
@@ -352,8 +384,8 @@ class SpellingState: PlayerGSMachine {
 class NinjitsuAnimatingState: PlayerGSMachine {
     var timer = Timer()
     var ninpoLabel = SKLabelNode()
-    let preTextures : [SKTexture] = (1...7).map({ return "Sasuke/Huoqiuninpo/\($0)"}).map(SKTexture.init)
-    let repeatTextures: [SKTexture] = (1...9).map({ return "Sasuke/Huoqiurepeat/\($0)"}).map(SKTexture.init)
+    let preTextures : [SKTexture] = (1...7).map({ return "Sasuke/Huoqiuprepare/ninpo\($0)"}).map(SKTexture.init)
+    let repeatTextures: [SKTexture] = (1...9).map({ return "Sasuke/Huoqiurepeat/ninpo\($0)"}).map(SKTexture.init)
     lazy var preaction :SKAction = .animate(with: preTextures, timePerFrame: 0.2)
     lazy var repeataction : SKAction = .repeatForever(.animate(with: repeatTextures, timePerFrame: 0.2))
     lazy var fire = SKEmitterNode()
@@ -374,12 +406,8 @@ class NinjitsuAnimatingState: PlayerGSMachine {
         
         
         //动画的规格不同,所以要把默认大小和动画的大小保存下来
-        let dWidth = player.size.width
-        let dHeight = player.size.height
-        let pretextureWidth = preTextures[0].size().width * player.dxScale
-        let pretextureHeight = preTextures[0].size().height * player.dyScale
-        let retextureWidth = repeatTextures[0].size().width * player.dxScale
-        let retextureHeight = repeatTextures[0].size().height * player.dyScale
+        let pretextureWidth = preTextures[0].size().width
+        let pretextureHeight = preTextures[0].size().height
         
         
         //创建火粒子
@@ -387,18 +415,14 @@ class NinjitsuAnimatingState: PlayerGSMachine {
         fire.zPosition = 10
  
         let wholeAction : SKAction = .sequence([
-            .run {
-                self.player.size = CGSize(width: pretextureWidth, height: pretextureHeight)
-            },
+            .resize(toWidth: pretextureWidth, height: pretextureHeight, duration: 0),
             preaction,
-            .run {
-                self.player.size = CGSize(width: retextureWidth, height: retextureHeight)
-            },
             .group([
                 repeataction,
                 .run {
                     self.player.addChild(self.fire)
-                    self.fire.run(.moveBy(x: 100, y: 0, duration: 0.2))
+                    self.fire.position.x += 100
+                    self.fire.run(.moveBy(x: 120, y: 0, duration: 1))
                 }
             ])
         ])
@@ -410,7 +434,6 @@ class NinjitsuAnimatingState: PlayerGSMachine {
             //            physicsBody.velocity = CGVector(dx: 100, dy: 200)
         
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false){_ in
-            self.player.size = CGSize(width: dWidth, height: dHeight)
             self.player.endAnimateNinpo = true
             self.player.stateMachine!.enter(IdleState.self)
         }
@@ -420,7 +443,9 @@ class NinjitsuAnimatingState: PlayerGSMachine {
         fire.run(.fadeOut(withDuration: 0.5))
         fire.removeFromParent()
         ninpoLabel.removeFromParent()
+        player.run(.resize(toWidth: player.dSize.width, height: player.dSize.height, duration: 0))
         player.removeAction(forKey: animateKey)
+        
 //        self.scene.jieyin = ""
 //        self.scene.ninpoLabel!.removeFromParent()
     }

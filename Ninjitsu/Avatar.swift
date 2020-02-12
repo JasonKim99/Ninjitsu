@@ -37,6 +37,8 @@ class Avatar : SKSpriteNode {
     var dashTime : TimeInterval = 0.15
     var shadowFadeOut : TimeInterval = 0.2
     
+    var dSize : CGSize = .zero
+    
     var hSpeed : CGFloat { //水平速度
         get {
             if let dx = physicsBody?.velocity.dx {
@@ -88,12 +90,12 @@ class Avatar : SKSpriteNode {
     }
     var isFacingRight  = true {
         didSet{
-            if isFacingRight {
-                xScale = abs(xScale)
-                dxScale = abs(dxScale)
-            } else {
+            if !isFacingRight {
                 xScale = -abs(xScale)
                 dxScale = -abs(dxScale)
+            } else {
+                xScale = abs(xScale)
+                dxScale = abs(dxScale)
             }
         }
     }
@@ -122,19 +124,24 @@ class Avatar : SKSpriteNode {
     var jieyin = ""
     
     
+    
+    
     init(characterName: String, texture: SKTexture, scale : CGFloat) {
         super.init(texture: texture, color: .clear, size: texture.size())
         name = characterName
+        dSize = size
         dxScale = scale
         dyScale = scale
         setPhysicBody(texture: texture)
+//        anchorPoint = CGPoint(x: 0.5, y: 0)
         setScale(scale)
+        
         setupStateMachine()
     }
     
     func setPhysicBody(texture: SKTexture){
         
-        physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 28, height: 45))
+        physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 28, height: 45), center: .zero)
         zPosition = 0
         physicsBody!.isDynamic = true
         physicsBody!.affectedByGravity = true

@@ -82,7 +82,7 @@ class GameScene: SKScene {
         
         
         //Camera
-        cameraNode?.run(.move(to: CGPoint(x: player.position.x + 300, y: 0), duration: 0.1))
+        cameraNode?.run(.move(to: CGPoint(x: player.position.x, y: 0), duration: 0.1))
 
         
 
@@ -137,6 +137,7 @@ class GameScene: SKScene {
             player.endAnimateNinpo = false
         }
 
+
         
     }
 }
@@ -186,8 +187,8 @@ extension GameScene {
 //        timeRemainingLabel = generateText(from: String(spellTimeRemaining), xPosition: 0, yPosition: 350)
         
         //初始化人物
-        player = Avatar(characterName: "Sasuke", texture: SKTexture(imageNamed: "Sasuke/Idle/1"), scale: 2)
-        player.position = CGPoint(x: -300, y: 300)
+        player = Avatar(characterName: "Sasuke", texture: SKTexture(imageNamed: "Sasuke/Idle/Idle1"), scale: 2)
+        player.position = CGPoint(x: .zero, y: 300)
         
         addChild(player)
         
