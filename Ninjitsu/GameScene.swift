@@ -81,6 +81,7 @@ extension GameScene {
         //            print("Family: \(family) Font names: \(names)")
         //        }
         
+        
     }
     
     //MARK: - Update
@@ -206,8 +207,7 @@ extension GameScene {
         
         
         
-        let testplayer = PlayerEntity(characterName: "Gaara").spriteComponent.node
-        
+
         
         
         

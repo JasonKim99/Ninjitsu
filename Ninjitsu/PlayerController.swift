@@ -24,7 +24,7 @@ class PlayerController: SKSpriteNode {
     var isKnobMoving : Bool = false
     var knobRadius : CGFloat = 100
     
-    var command : ControllerProtocol?
+    var command : ControlDelegate?
     
     init(frame: CGRect) {
         super.init(texture: .none, color: .clear, size: frame.size)
@@ -89,17 +89,17 @@ extension PlayerController{
 }
 
 
-//MARK: - Touches
-//extension PlayerControllers {
+////MARK: - Touches
+//extension PlayerController {
 //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        for touch in touches {
 //
-//            let location = touch.location(in: self)
+//            let location = touch.location(in: parent!)
 //            //如果点击摇杆
 //            isKnobMoving = joystick.contains(location)
 //            if isKnobMoving && !selectedNodes.values.contains(joystick){
 //                selectedNodes[touch] = joystick
-//                command!.tryExecute(button: joystickKnob)
+//                print("1")
 //
 //            }
 //
@@ -110,7 +110,7 @@ extension PlayerController{
 //                }
 ////                jumpButton.isPressed = true
 //                if command != nil {
-//                    command!.tryExecute(button: jumpButton)
+//                    command!.tryExecute()
 //                }
 //                jumpButton.isPressed = true
 //
@@ -123,7 +123,7 @@ extension PlayerController{
 //                }
 //                //点击冲刺
 //                if command != nil {
-//                    command!.tryExecute(button: dashButton)
+//                    command!.tryExecute()
 //                }
 //                dashButton.isPressed = true
 //            }

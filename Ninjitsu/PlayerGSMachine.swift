@@ -417,7 +417,7 @@ class NinjitsuAnimatingState: PlayerGSMachine {
                 .run {
                     self.player.addChild(self.fire)
                     self.fire.position.x += 100
-                    self.fire.run(.moveBy(x: 120, y: 0, duration: 1))
+                    self.fire.run(.moveBy(x: 120, y: 0, duration: 0.3))
                 }
             ])
         ])
