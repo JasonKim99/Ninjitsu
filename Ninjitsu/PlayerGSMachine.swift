@@ -314,7 +314,7 @@ class SpellingState: PlayerGSMachine {
         
         jieyinLabel = player.generateText(with: player.jieyin, offsetX: 0, offsetY: 30)
         jieyinLabel.fontSize = 12
-        timeRemainingLabel = player.generateText(with: String(format: "%.1f", timeRemaining), offsetX: 150 , offsetY: 100)
+        timeRemainingLabel = player.generateText(with: String(format: "%.1f", timeRemaining), offsetX: 0, offsetY: 200)
         player.addChild(timeRemainingLabel)
         player.addChild(jieyinLabel)
         
