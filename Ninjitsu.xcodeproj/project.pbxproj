@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E00E0F5723EB2A2300A16BBA /* MyActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = E00E0F5623EB2A2300A16BBA /* MyActions.sks */; };
 		E00E0F5A23EBA5CB00A16BBA /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00E0F5923EBA5CB00A16BBA /* Avatar.swift */; };
+		E022802E240337A200738F77 /* MyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = E022802C240337A200738F77 /* MyTileSet.sks */; };
+		E022802F240337A200738F77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E022802D240337A200738F77 /* Assets.xcassets */; };
 		E033B32F23EC6C0500274DD7 /* Collision.swift in Sources */ = {isa = PBXBuildFile; fileRef = E033B32E23EC6C0500274DD7 /* Collision.swift */; };
 		E054233C23F4607D007E1D29 /* StatusComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E054233B23F4607D007E1D29 /* StatusComponent.swift */; };
 		E054233E23F537E6007E1D29 /* ControlDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E054233D23F537E6007E1D29 /* ControlDelegate.swift */; };
@@ -66,6 +68,8 @@
 /* Begin PBXFileReference section */
 		E00E0F5623EB2A2300A16BBA /* MyActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyActions.sks; sourceTree = "<group>"; };
 		E00E0F5923EBA5CB00A16BBA /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
+		E022802C240337A200738F77 /* MyTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyTileSet.sks; sourceTree = "<group>"; };
+		E022802D240337A200738F77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E033B32E23EC6C0500274DD7 /* Collision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collision.swift; sourceTree = "<group>"; };
 		E054233B23F4607D007E1D29 /* StatusComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusComponent.swift; sourceTree = "<group>"; };
 		E054233D23F537E6007E1D29 /* ControlDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlDelegate.swift; sourceTree = "<group>"; };
@@ -247,6 +251,8 @@
 			children = (
 				E0A61CBF23F25030007AC106 /* MyScene.sks */,
 				E00E0F5623EB2A2300A16BBA /* MyActions.sks */,
+				E022802C240337A200738F77 /* MyTileSet.sks */,
+				E022802D240337A200738F77 /* Assets.xcassets */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -369,7 +375,9 @@
 				E0B09F4B23E1AD5B00CD707B /* fire.sks in Resources */,
 				E0B09F4D23E1C00800CD707B /* fire1.sks in Resources */,
 				E0AF0BA023D8858D00C8A2A4 /* LaunchScreen.storyboard in Resources */,
+				E022802E240337A200738F77 /* MyTileSet.sks in Resources */,
 				E0A61CC023F25030007AC106 /* MyScene.sks in Resources */,
+				E022802F240337A200738F77 /* Assets.xcassets in Resources */,
 				E0FAFA8A23D8910F00BB114A /* WawaSC-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
